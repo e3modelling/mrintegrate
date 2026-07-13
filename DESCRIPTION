@@ -1,0 +1,11 @@
+Package: mrintegrate
+Type: Package
+Title: RE-INTEGRATE
+Version: 0.0.1
+Author: Anastasis Giannousakis, Fotis Sioutas
+Maintainer: Fotis Sioutas <fotis.sioutas@wsp.com>
+Description: RE-INTEGRATE
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
