@@ -6,6 +6,16 @@ Author: Anastasis Giannousakis, Fotis Sioutas
 Maintainer: Fotis Sioutas <fotis.sioutas@wsp.com>
 Description: RE-INTEGRATE
 License: MIT + file LICENSE
+Depends:
+    madrat,
+    magclass
+Imports:
+    dplyr,
+    tidyr,
+    readxl,
+    openxlsx,
+    quitte,
+    stringr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
