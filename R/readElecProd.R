@@ -6,7 +6,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("ElecProd", convert = TRUE)
+#' a <- readSource("ElecProd")
 #' }
 #'
 #' @importFrom dplyr filter mutate %>%
@@ -52,6 +52,14 @@ readElecProd <- function() {
   df[["variable"]] <- "Electricity Production"
   df[["region"]] <- region_name
   qx <- as.quitte(df)
+  suppressWarnings({
+    levels(qx[["region"]]) <- toolCountry2isocode(
+      levels(qx[["region"]]),
+      mapping = c("World" = "GLO")
+    )
+  })
+
+  qx <- dplyr::filter(qx, !is.na(qx[["region"]]))
   x <- as.magpie(qx)
 
   list(x = x,
@@ -65,37 +73,58 @@ readElecProd <- function() {
                        Confidential = "E3M"))
 }
 
+#@rdname readElecProd
+#@param x MAgPIE object returned by readElecProd
+#@export
+#@order 3
+# convertElecProd <- function(x) {
+#   x <- quitte::as.quitte(x)
+#
+#   suppressWarnings({
+#     levels(x[["region"]]) <- toolCountry2isocode(
+#       levels(x[["region"]]),
+#       mapping = c("World" = "GLO")
+#     )
+#   })
+#
+#   x <- dplyr::filter(x, !is.na(x[["region"]]))
+#   x <- magclass::as.magpie(x)
+# }
+
 #' @rdname readElecProd
-#' @param x MAgPIE object returned by readElecProd
-#' @export
-#' @order 3
-convertElecProd <- function(x) {
-  x <- quitte::as.quitte(x)
-
-  suppressWarnings({
-    levels(x[["region"]]) <- mrcommons::toolCountry2isocode(
-      levels(x[["region"]]),
-      mapping = c("World" = "GLO")
-    )
-  })
-
-  x <- dplyr::filter(x, !is.na(x[["region"]]))
-  x <- magclass::as.magpie(x)
-}
-
-#' @rdname readElecProd
+#' @importFrom utils download.file
 #' @export
 #' @order 1
 downloadElecProd <- function() {
-  stop("Manual download of RE-INTEGRATE data required!")
-  # Compose meta data
-  list(url           = "https://zenodo.org/records/15066501/files/Senegal-Data.xlsx?download=1",
-       doi           = "-",
-       title         = "RE-INTEGRATE Electricity Production data",
-       description   = "RE-INTEGRATE Electricity Production data from 2012 to 2029",
-       unit          = "-",
-       author        = "RE-INTEGRATE",
-       release_date  = "2026",
-       license       = "-",
-       comment       = "Manual download required! Accessed on the 13.7.2026")
+
+  url <- paste0(
+    "https://zenodo.org/records/15066501/files/",
+    "Senegal-Data.xlsx?download=1"
+  )
+
+  utils::download.file(
+    url = url,
+    destfile = "Senegal-Data.xlsx",
+    mode = "wb",
+    quiet = FALSE
+  )
+
+  if (!file.exists("Senegal-Data.xlsx")) {
+    stop("Download failed: Senegal-Data.xlsx was not created.")
+  }
+
+  list(
+    url = url,
+    doi = "10.5281/zenodo.15066501",
+    title = "RE-INTEGRATE Electricity Production data",
+    description = paste(
+      "RE-INTEGRATE Electricity Production data",
+      "from 2012 to 2029"
+    ),
+    unit = "GWh",
+    author = "RE-INTEGRATE",
+    release_date = "2026",
+    license = "-",
+    comment = "Automatically downloaded from Zenodo."
+  )
 }

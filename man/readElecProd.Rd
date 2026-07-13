@@ -3,17 +3,11 @@
 \name{downloadElecProd}
 \alias{downloadElecProd}
 \alias{readElecProd}
-\alias{convertElecProd}
 \title{Read-in data from RE-INTEGRATE about Electricity Production}
 \usage{
 downloadElecProd()
 
 readElecProd()
-
-convertElecProd(x)
-}
-\arguments{
-\item{x}{MAgPIE object returned by readElecProd}
 }
 \value{
 The read-in data into a magpie object.
@@ -23,7 +17,7 @@ Read-in data from RE-INTEGRATE about Electricity Production
 }
 \examples{
 \dontrun{
-a <- readSource("ElecProd", convert = TRUE)
+a <- readSource("ElecProd")
 }
 
 }
