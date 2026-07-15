@@ -2,7 +2,7 @@
 #'
 #' Reads RE-INTEGRATE datasets containing electricity production by sector
 #' and national energy balance statistics for Senegal. Depending on the
-#' selected `subtype`, the function imports and formats either electricity
+#' selected subtype, the function imports and formats either electricity
 #' production data ("EleProd") or detailed energy balance data
 #' ("EnergyBalances"), returning the results as a MAgPIE object.
 #'
@@ -21,7 +21,6 @@
 #'
 #' @importFrom readxl read_excel
 #' @importFrom stringr str_remove
-#' @importFrom readxl read_excel
 #' @importFrom dplyr mutate rename select filter %>%
 #' @importFrom tidyr fill pivot_longer
 #' @importFrom zoo na.locf

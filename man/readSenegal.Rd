@@ -19,7 +19,7 @@ The read-in data as a MAgPIE object.
 \description{
 Reads RE-INTEGRATE datasets containing electricity production by sector
 and national energy balance statistics for Senegal. Depending on the
-selected \code{subtype}, the function imports and formats either electricity
+selected subtype, the function imports and formats either electricity
 production data ("EleProd") or detailed energy balance data
 ("EnergyBalances"), returning the results as a MAgPIE object.
 }
