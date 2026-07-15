@@ -49,6 +49,10 @@ readDemocraticRepublicCongo <- function() {
       recursive = TRUE
     )
 
+    files <- files[
+      basename(files) != "CostElectrictyGeneration.csv"
+    ]
+
     if (length(files) == 0) {
       stop("No CSV files found in: ", path)
     }
@@ -62,31 +66,25 @@ readDemocraticRepublicCongo <- function() {
         stringsAsFactors = FALSE
       )
 
-      if (ncol(df) < 4) {
-        stop("File has fewer than four columns: ", f)
+      if (ncol(df) == 0) {
+        stop("File has no columns: ", f)
       }
 
-      # Save the name of the last column
+      # Store the original name of the last column
       variable <- names(df)[ncol(df)]
 
-      # Keep first four columns
-      df <- df[, 1:4, drop = FALSE]
+      # Rename the last column to value
+      names(df)[ncol(df)] <- "value"
 
-      names(df) <- c(
-        "column1",
-        "column2",
-        "column3",
-        "value"
-      )
-
-      # Add a new column containing the original last column name
+      # Add metadata
       df$variable <- variable
+      df$scenario <- scenario
 
       df
     })
 
-    result <- do.call(rbind, data_list)
-    rownames(result) <- NULL
+    # Match columns by name and fill missing columns with NA
+    result <- dplyr::bind_rows(data_list)
 
     result
   }
@@ -105,7 +103,7 @@ readDemocraticRepublicCongo <- function() {
   MEAP[["scenario"]] <- "MEAP"
 
   DRC_results <- rbind(BASE, MEAP)
-
+  DRC_results
 
 
 
