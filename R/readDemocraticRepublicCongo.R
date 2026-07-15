@@ -23,8 +23,6 @@
 #'
 readDemocraticRepublicCongo <- function() {
 
-
-
   unzip("DRC-LCS-Model data and results.zip")
 
   dir.create("DRC-LCS-Model data and results/BASE", showWarnings = FALSE)
@@ -103,9 +101,40 @@ readDemocraticRepublicCongo <- function() {
   MEAP[["scenario"]] <- "MEAP"
 
   DRC_results <- rbind(BASE, MEAP)
-  DRC_results
 
+  BASECostElectrictyGeneration <- read.csv("DRC-LCS-Model data and results/BASE/csv/CostElectrictyGeneration.csv")
+  BASECostElectrictyGeneration[["scenario"]] <- "BASE"
+  MEAPCostElectrictyGeneration <- read.csv("DRC-LCS-Model data and results/MEAP/csv/CostElectrictyGeneration.csv")
+  MEAPCostElectrictyGeneration[["scenario"]] <- "MEAP"
+  CostElectrictyGeneration <- rbind(BASECostElectrictyGeneration, MEAPCostElectrictyGeneration)
+  CostElectrictyGeneration_long <- CostElectrictyGeneration %>%
+    pivot_longer(
+      cols = -c(y, scenario),
+      names_to = "variable",
+      values_to = "value"
+    )
 
+  CostElectrictyGeneration_long <- CostElectrictyGeneration_long %>%
+    mutate(
+      r = NA_character_,
+      e = NA_character_,
+      t = NA_character_,
+      l = NA_character_,
+      f = NA_character_,
+      m = NA_integer_
+    )
+
+  DRC_results <- bind_rows(
+    DRC_results,
+    CostElectrictyGeneration_long
+  )
+
+  DRC_results[["unit"]] <- "various"
+  DRC_results[["region"]] <- 'DRC'
+  names(DRC_results) <- sub("y", "period", names(DRC_results))
+
+  qx <- as.quitte(DRC_results)
+  x <- as.magpie(qx)
 
   # df <- read_excel("OSeMOSYS-DRC dataset for the Power Sector.xlsx",
   #                  sheet = "Demand", skip = 3, n_max = 5) %>%
