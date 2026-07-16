@@ -74,6 +74,59 @@ readSouthAfrica <- function() {
   CombinedElc[["region"]] <- "ZAF"
   CombinedElc[["type"]] <- "input"
 
+  Electricity <- excel_data$Electricity
+  Electricity1 <- Electricity[1:12,1:9]
+
+  # Use row 2 as column names
+  names(Electricity1) <- make.unique(
+    as.character(unlist(Electricity1[2, ]))
+  )
+
+  # Remove the first three rows
+  Electricity1 <- Electricity1[-c(1, 2), ]
+  names(Electricity1)[1] <- "sector"
+
+  # Pivot year columns to long format
+  Electricity1 <- Electricity1 %>%
+    pivot_longer(
+      cols = -c(sector),
+      names_to = "period",
+      values_to = "value"
+    ) %>%
+    mutate(
+      value = as.numeric(value)
+    )
+
+  Electricity1[["unit"]] <- "GWh"
+  Electricity1[["region"]] <- "ZAF"
+  Electricity1[["type"]] <- "input"
+
+  Electricity2 <- Electricity[,13:16]
+
+  # Use row 2 as column names
+  names(Electricity2) <- make.unique(
+    as.character(unlist(Electricity2[2, ]))
+  )
+
+  # Remove the first three rows
+  Electricity2 <- Electricity2[-c(1, 2), ]
+  names(Electricity2)[1] <- "sector"
+
+  # Pivot year columns to long format
+  Electricity1 <- Electricity1 %>%
+    pivot_longer(
+      cols = -c(sector),
+      names_to = "period",
+      values_to = "value"
+    ) %>%
+    mutate(
+      value = as.numeric(value)
+    )
+
+  Electricity1[["unit"]] <- "GWh"
+  Electricity1[["region"]] <- "ZAF"
+  Electricity1[["type"]] <- "input"
+
   list(x = x,
        weight = NULL,
        class = "list",
