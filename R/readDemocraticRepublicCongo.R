@@ -18,6 +18,7 @@
 #' @importFrom tidyr fill pivot_longer
 #' @importFrom zoo na.locf
 #' @importFrom quitte as.quitte
+#' @importFrom utils unzip
 #' @export
 #' @order 2
 #'
@@ -134,37 +135,237 @@ readDemocraticRepublicCongo <- function() {
   names(DRC_results) <- sub("y", "period", names(DRC_results))
 
   qx <- as.quitte(DRC_results)
-  x <- as.magpie(qx)
+  qx[["type"]] <- "output"
+  output <- as.magpie(qx)
 
-  # df <- read_excel("OSeMOSYS-DRC dataset for the Power Sector.xlsx",
-  #                  sheet = "Demand", skip = 3, n_max = 5) %>%
-  #   pivot_longer(
-  #     cols = matches("^\\d{4}$"),
-  #     names_to = "period",
-  #     values_to = "value"
-  #   ) %>%
-  #   mutate(
-  #     period = as.integer(period)
-  #   )  %>% select(- Source)
-  #
-  # region_name <- "DemocraticRepublicCongo"
-  #
-  # names(df) <- c("description", "variable", "period", "value")
-  #
-  # df[["value"]] <- df[["value"]] * 277.7778
-  # df[["unit"]] <- "GWh"
-  # df[["region"]] <- region_name
-  #
-  # qx <- as.quitte(df)
-  # suppressWarnings({
-  #   levels(qx[["region"]]) <- toolCountry2isocode(
-  #     levels(qx[["region"]]),
-  #     mapping = c("DemocraticRepublicCongo" = "DRC")
-  #   )
-  # })
-  #
-  # qx <- dplyr::filter(qx, !is.na(qx[["region"]]))
-  # x <- as.magpie(qx)
+  file <- "OSeMOSYS-DRC dataset for the Power Sector.xlsx"
+
+  sheet_names <- excel_sheets(file)
+
+  excel_data <- setNames(
+    lapply(sheet_names, function(sheet) {
+      read_excel(
+        path = file,
+        sheet = sheet,
+        col_names = FALSE
+      )
+    }),
+    sheet_names
+  )
+
+  SETS <- excel_data$SETS %>%
+    select(-3)
+
+
+  # Save first row
+  top_header <- as.character(unlist(SETS[1, ]))
+
+  # Use second row as names (make them unique)
+  names(SETS) <- make.unique(as.character(unlist(SETS[2, ])))
+
+  # Remove first two rows
+  SETS <- SETS[-c(1, 2), ]
+
+  # Add category columns
+  SETS$Category1 <- top_header[1]
+  SETS$Category2 <- top_header[3]
+
+  # Reorder columns
+  SETS <- SETS %>%
+    relocate(Category1, .before = Code) %>%
+    relocate(Category2, .before = Code.1) %>%
+    mutate(
+      Category2 = if_else(
+        is.na(Code.1) & is.na(Description.1),
+        NA_character_,
+        Category2
+      )
+    )
+
+  capacity_factor <- excel_data$`Capacity Factor & Lifetime`
+
+  # Remove column 6
+  capacity_factor <- capacity_factor[, -6]
+
+  # Save first row
+  top_header <- as.character(unlist(capacity_factor[1, ]))
+
+  # Use second row as column names
+  names(capacity_factor) <- make.unique(as.character(unlist(capacity_factor[2, ])))
+
+  # Remove first two rows
+  capacity_factor <- capacity_factor[-c(1, 2), ]
+
+  # Add category columns
+  capacity_factor$Category1 <- top_header[1]
+  capacity_factor$Category2 <- top_header[6]
+
+  # Reorder columns
+  capacity_factor <- capacity_factor %>%
+    relocate(Category1, .before = Source) %>%
+    relocate(Category2, .before = Source.1)
+
+  capacity_factor <- capacity_factor %>%
+    fill(Technology, Code.1, .direction = "down")
+
+
+  ResidualCapacityAggregated <- excel_data$`Residual Capacity (aggregated)`
+
+  # Use row 3 as column names
+  names(ResidualCapacityAggregated) <- make.unique(
+    as.character(unlist(ResidualCapacityAggregated[3, ]))
+  )
+
+  # Remove the first three rows
+  ResidualCapacityAggregated <- ResidualCapacityAggregated[-c(1, 2, 3), ]
+  ResidualCapacityAggregated <- ResidualCapacityAggregated[,-1]
+
+  # Pivot year columns to long format
+  ResidualCapacityAggregated <- ResidualCapacityAggregated %>%
+    pivot_longer(
+      cols = -c(Technology, Code),
+      names_to = "period",
+      values_to = "value"
+    ) %>%
+    mutate(
+      period = as.numeric(period),
+      value = as.numeric(value)
+    )
+
+  ResidualCapacityAggregated[["variable"]] <- "Residual Capacity (aggregated)"
+  ResidualCapacityAggregated[["unit"]] <- "GW"
+  ResidualCapacityAggregated[["region"]] <- "DRC"
+  ResidualCapacityAggregated <- as.quitte(ResidualCapacityAggregated)
+  ResidualCapacityAggregated[["type"]] <- "input"
+
+  Costs <- excel_data$Costs
+
+  # Use row 3 as column names
+  names(Costs) <- make.unique(
+    as.character(unlist(Costs[3, ]))
+  )
+
+  # Remove the first three rows
+  Costs <- Costs[-c(1, 2, 3), ]
+  Costs <- Costs[,-1]
+
+  # Pivot year columns to long format
+  Costs <- Costs %>%
+    pivot_longer(
+      cols = -c(Technology, Code),
+      names_to = "period",
+      values_to = "value"
+    ) %>%
+    mutate(
+      period = as.numeric(period),
+      value = as.numeric(value)
+    )
+
+  Costs[["variable"]] <- "Overnight Capital Cost"
+  Costs[["unit"]] <- "$/kW"
+  Costs[["region"]] <- "DRC"
+  Costs <- as.quitte(Costs)
+  Costs[["type"]] <- "input"
+
+  Investment <- excel_data$Investment
+
+  # Use row 3 as column names
+  names(Investment) <- make.unique(
+    as.character(unlist(Investment[4, ]))
+  )
+
+  # Remove the first three rows
+  Investment <- Investment[-c(1, 2, 3, 4), ]
+  Investment <- Investment[,-1]
+
+  Investment[["variable"]] <- "Planned Capacity Investment"
+  Investment[["unit"]] <- "GW"
+  Investment[["region"]] <- "DRC"
+  Investment[["type"]] <- "input"
+
+  ResourcePotential <- excel_data$`Resource Potential`
+  ResourcePotential1 <- ResourcePotential[1:8,]
+  # Use row 3 as column names
+  names(ResourcePotential1) <- make.unique(
+    as.character(unlist(ResourcePotential1[3, ]))
+  )
+
+  # Remove the first three rows
+  ResourcePotential1 <- ResourcePotential1[-c(1, 2, 3), ]
+  ResourcePotential1 <- ResourcePotential1[,-1]
+
+  ResourcePotential1[["variable"]] <- "Renewable Energy Potential"
+  ResourcePotential1[["unit"]] <- "various"
+  ResourcePotential1[["region"]] <- "DRC"
+  ResourcePotential1[["type"]] <- "input"
+  ResourcePotential2 <- ResourcePotential[11:16,]
+  # Use row 3 as column names
+  names(ResourcePotential2) <- make.unique(
+    as.character(unlist(ResourcePotential[3, ]))
+  )
+
+  # Remove the first three rows
+  ResourcePotential2 <- ResourcePotential2[-c(1, 2, 3), ]
+  ResourcePotential2 <- ResourcePotential2[,-1]
+
+  ResourcePotential2[["variable"]] <- "Fossil Fuel Potential"
+  ResourcePotential2[["unit"]] <- "PJ"
+  ResourcePotential2[["region"]] <- "DRC"
+  ResourcePotential2[["type"]] <- "input"
+  ResourcePotential <- rbind(ResourcePotential1, ResourcePotential2)
+
+  Demand <-excel_data$Demand
+  # Use row 3 as column names
+  names(Demand) <- make.unique(
+    as.character(unlist(Demand[3, ]))
+  )
+
+  # Remove the first three rows
+  Demand <- Demand[-c(1, 2, 3), ]
+  Demand <- Demand[, -1]
+  Demand <- Demand[1:4,] %>%
+    mutate(
+      across(matches("^\\d{4}$"), as.numeric)
+    ) %>%
+    pivot_longer(
+      cols = matches("^\\d{4}$"),
+      names_to = "period",
+      values_to = "value"
+    ) %>%
+    mutate(
+      period = as.integer(period)
+    )
+
+  Demand[["unit"]] <- "PJ"
+  Demand[["region"]] <- "DRC"
+  Demand[["variable"]] <- "Electricity Demand"
+
+
+  ImportsExports <-excel_data$`Imports & Exports`
+  # Use row 3 as column names
+  names(ImportsExports) <- make.unique(
+    as.character(unlist(ImportsExports[3, ]))
+  )
+
+  # Remove the first three rows
+  ImportsExports <- ImportsExports[-c(1, 2, 3), ]
+  ImportsExports <- ImportsExports[, -1]
+  ImportsExports <- ImportsExports %>%
+    mutate(
+      across(matches("^\\d{4}$"), as.numeric)
+    ) %>%
+    pivot_longer(
+      cols = matches("^\\d{4}$"),
+      names_to = "period",
+      values_to = "value"
+    ) %>%
+    mutate(
+      period = as.integer(period)
+    )
+
+  ImportsExports[["unit"]] <- "PJ"
+  ImportsExports[["region"]] <- "DRC"
+  ImportsExports[["variable"]] <- "Total Technology Annual Activity Upper Limit"
 
   list(x = x,
        weight = NULL,
