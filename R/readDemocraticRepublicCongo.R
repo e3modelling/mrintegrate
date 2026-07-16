@@ -182,6 +182,10 @@ readDemocraticRepublicCongo <- function() {
       )
     )
 
+  SETS[["unit"]] <- NA
+  SETS[["region"]] <- "DRC"
+  SETS[["type"]] <- "input"
+
   capacity_factor <- excel_data$`Capacity Factor & Lifetime`
 
   # Remove column 6
@@ -197,16 +201,15 @@ readDemocraticRepublicCongo <- function() {
   capacity_factor <- capacity_factor[-c(1, 2), ]
 
   # Add category columns
-  capacity_factor$Category1 <- top_header[1]
   capacity_factor$Category2 <- top_header[6]
 
-  # Reorder columns
-  capacity_factor <- capacity_factor %>%
-    relocate(Category1, .before = Source) %>%
-    relocate(Category2, .before = Source.1)
 
   capacity_factor <- capacity_factor %>%
     fill(Technology, Code.1, .direction = "down")
+
+  capacity_factor[["unit"]] <- NA
+  capacity_factor[["region"]] <- "DRC"
+  capacity_factor[["type"]] <- "input"
 
 
   ResidualCapacityAggregated <- excel_data$`Residual Capacity (aggregated)`
@@ -235,7 +238,6 @@ readDemocraticRepublicCongo <- function() {
   ResidualCapacityAggregated[["variable"]] <- "Residual Capacity (aggregated)"
   ResidualCapacityAggregated[["unit"]] <- "GW"
   ResidualCapacityAggregated[["region"]] <- "DRC"
-  ResidualCapacityAggregated <- as.quitte(ResidualCapacityAggregated)
   ResidualCapacityAggregated[["type"]] <- "input"
 
   Costs <- excel_data$Costs
@@ -339,7 +341,8 @@ readDemocraticRepublicCongo <- function() {
   Demand[["unit"]] <- "PJ"
   Demand[["region"]] <- "DRC"
   Demand[["variable"]] <- "Electricity Demand"
-
+  Demand[["type"]] <- "input"
+  Demand <- as.quitte(Demand) %>% as.magpie()
 
   ImportsExports <-excel_data$`Imports & Exports`
   # Use row 3 as column names
@@ -366,11 +369,20 @@ readDemocraticRepublicCongo <- function() {
   ImportsExports[["unit"]] <- "PJ"
   ImportsExports[["region"]] <- "DRC"
   ImportsExports[["variable"]] <- "Total Technology Annual Activity Upper Limit"
+  ImportsExports[["type"]] <- "input"
+
+  x <- list(output, SETS, capacity_factor, ResidualCapacityAggregated, Costs,
+  Investment, ResourcePotential, Demand, ImportsExports)
+  x <- setNames(list(output,SETS,capacity_factor,ResidualCapacityAggregated,
+      Costs,Investment,ResourcePotential,Demand,ImportsExports),
+    c("output","SETS","capacity_factor","ResidualCapacityAggregated","Costs",
+      "Investment","ResourcePotential","Demand","ImportsExports"))
 
   list(x = x,
        weight = NULL,
        description = c(category = "Electricity Demand",
                        type = "Electricity Demand",
+                       class = "list",
                        filename = "OSeMOSYS-DRC dataset for the Power Sector.xlsx",
                        `Indicative size (MB)` = 0.7,
                        dimensions = "3D",
