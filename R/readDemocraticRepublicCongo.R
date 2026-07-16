@@ -12,13 +12,12 @@
 #' DRC <- readSource("DemocraticRepublicCongo")
 #' }
 #'
-#' @importFrom stringr str_remove
-#' @importFrom readxl read_excel
-#' @importFrom dplyr mutate rename select filter %>%
+#' @importFrom readxl read_excel excel_sheets
+#' @importFrom dplyr mutate select bind_rows relocate if_else across matches %>%
 #' @importFrom tidyr fill pivot_longer
-#' @importFrom zoo na.locf
 #' @importFrom quitte as.quitte
-#' @importFrom utils unzip
+#' @importFrom utils unzip read.csv
+#' @importFrom stats setNames
 #' @export
 #' @order 2
 #'
@@ -125,7 +124,7 @@ readDemocraticRepublicCongo <- function() {
       m = NA_integer_
     )
 
-  DRC_results <- bind_rows(
+  DRC_results <- dplyr::bind_rows(
     DRC_results,
     CostElectrictyGeneration_long
   )
@@ -142,7 +141,7 @@ readDemocraticRepublicCongo <- function() {
 
   sheet_names <- excel_sheets(file)
 
-  excel_data <- setNames(
+  excel_data <- stats::setNames(
     lapply(sheet_names, function(sheet) {
       read_excel(
         path = file,
@@ -371,18 +370,16 @@ readDemocraticRepublicCongo <- function() {
   ImportsExports[["variable"]] <- "Total Technology Annual Activity Upper Limit"
   ImportsExports[["type"]] <- "input"
 
-  x <- list(output, SETS, capacity_factor, ResidualCapacityAggregated, Costs,
-  Investment, ResourcePotential, Demand, ImportsExports)
-  x <- setNames(list(output,SETS,capacity_factor,ResidualCapacityAggregated,
+  x <- stats::setNames(list(output,SETS,capacity_factor,ResidualCapacityAggregated,
       Costs,Investment,ResourcePotential,Demand,ImportsExports),
     c("output","SETS","capacity_factor","ResidualCapacityAggregated","Costs",
       "Investment","ResourcePotential","Demand","ImportsExports"))
 
   list(x = x,
        weight = NULL,
-       description = c(category = "Electricity Demand",
-                       type = "Electricity Demand",
-                       class = "list",
+       class = "list",
+       description = c(category = "Input, output of DRC",
+                       type = "Power mix",
                        filename = "OSeMOSYS-DRC dataset for the Power Sector.xlsx",
                        `Indicative size (MB)` = 0.7,
                        dimensions = "3D",
