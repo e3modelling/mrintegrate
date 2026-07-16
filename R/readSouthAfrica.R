@@ -90,7 +90,7 @@ readSouthAfrica <- function() {
   Electricity1 <- Electricity1 %>%
     pivot_longer(
       cols = -c(sector),
-      names_to = "period",
+      names_to = "variable",
       values_to = "value"
     ) %>%
     mutate(
@@ -100,6 +100,7 @@ readSouthAfrica <- function() {
   Electricity1[["unit"]] <- "GWh"
   Electricity1[["region"]] <- "ZAF"
   Electricity1[["type"]] <- "input"
+  Electricity1[["Fuel"]] <- NA
 
   Electricity2 <- Electricity[,13:16]
 
@@ -111,21 +112,63 @@ readSouthAfrica <- function() {
   # Remove the first three rows
   Electricity2 <- Electricity2[-c(1, 2), ]
   names(Electricity2)[1] <- "sector"
+  names(Electricity2)[2] <- "variable"
+  names(Electricity2)[4] <- "value"
 
-  # Pivot year columns to long format
-  Electricity1 <- Electricity1 %>%
-    pivot_longer(
-      cols = -c(sector),
-      names_to = "period",
-      values_to = "value"
-    ) %>%
-    mutate(
-      value = as.numeric(value)
-    )
+  Electricity2[["unit"]] <- "GWh"
+  Electricity2[["region"]] <- "ZAF"
+  Electricity2[["type"]] <- "input"
 
-  Electricity1[["unit"]] <- "GWh"
-  Electricity1[["region"]] <- "ZAF"
-  Electricity1[["type"]] <- "input"
+  Electricity <- rbind(Electricity1, Electricity2)
+
+  Liquid_Fuels <- excel_data$Liquid_Fuels
+
+  # Use row 2 as column names
+  names(Liquid_Fuels) <- make.unique(
+    as.character(unlist(Liquid_Fuels[1, ]))
+  )
+
+  # Remove the first rows
+  Liquid_Fuels <- Liquid_Fuels[-c(1), ]
+
+  names(Liquid_Fuels)[5] <- "value"
+
+  Liquid_Fuels[["unit"]] <- "PJ"
+  Liquid_Fuels[["region"]] <- "ZAF"
+  Liquid_Fuels[["type"]] <- "input"
+
+  SectorMap <- excel_data$SectorMap
+
+  SectorMap1 <- SectorMap[c(1:37),c(1,2)]
+
+  # Use row 2 as column names
+  names(SectorMap1) <- make.unique(
+    as.character(unlist(SectorMap1))
+  )
+
+  # Remove the first rows
+  SectorMap1 <- SectorMap1[-c(1), ]
+
+  SectorMap2 <- SectorMap[c(1:37),c(4:35)]
+
+  # Use row 2 as column names
+  names(SectorMap1) <- make.unique(
+    as.character(unlist(SectorMap1))
+  )
+
+  # Remove the first rows
+  SectorMap1 <- SectorMap1[-c(1), ]
+
+  names(Liquid_Fuels)[5] <- "value"
+
+  Liquid_Fuels[["unit"]] <- "PJ"
+  Liquid_Fuels[["region"]] <- "ZAF"
+  Liquid_Fuels[["type"]] <- "input"
+
+  x <- stats::setNames(list(PartialProvincialEB2017, CombinedElc, Electricity,
+                            Liquid_Fuels),
+                       c("PartialProvincialEB2017", "CombinedElc", "ElectrityProduction",
+                         "Liquid_Fuels"))
 
   list(x = x,
        weight = NULL,
