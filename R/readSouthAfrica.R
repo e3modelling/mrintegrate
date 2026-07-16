@@ -3,13 +3,13 @@
 #' Reads RE-INTEGRATE datasets containing electricity production by sector
 #' and national energy balance statistics for South Africa
 #'
-#' @return The read-in data as a MAgPIE object.
+#' @return The read-in data.
 #'
 #' @author Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' DRC <- readSource("SouthAfrica")
+#' SouthAfrica <- readSource("SouthAfrica")
 #' }
 #'
 #' @importFrom stringr str_remove
@@ -23,44 +23,66 @@
 #'
 readSouthAfrica <- function() {
 
-  df <- read_excel("South African Disaggregated Provincial Electricity and Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx",
-                   sheet = "Demand", skip = 3, n_max = 5) %>%
+  file <- "South African Disaggregated Provincial Electricity and Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx"
+
+  sheet_names <- excel_sheets(file)
+
+  excel_data <- stats::setNames(
+    lapply(sheet_names, function(sheet) {
+      read_excel(
+        path = file,
+        sheet = sheet,
+        col_names = FALSE
+      )
+    }),
+    sheet_names
+  )
+
+  PartialProvincialEB2017 <- excel_data$PartialProvincialEB2017
+
+  # Use row 2 as column names
+  names(PartialProvincialEB2017) <- make.unique(
+    as.character(unlist(PartialProvincialEB2017[2, ]))
+  )
+
+  # Remove the first three rows
+  PartialProvincialEB2017 <- PartialProvincialEB2017[-c(1, 2), ]
+
+  # Pivot year columns to long format
+  PartialProvincialEB2017 <- PartialProvincialEB2017 %>%
     pivot_longer(
-      cols = matches("^\\d{4}$"),
+      cols = -c(`Row Labels`),
       names_to = "period",
       values_to = "value"
     ) %>%
     mutate(
-      period = as.integer(period)
-    )  %>% select(- Source)
-
-  region_name <- "DemocraticRepublicCongo"
-
-  names(df) <- c("description", "variable", "period", "value")
-
-  df[["value"]] <- df[["value"]] * 277.7778
-  df[["unit"]] <- "GWh"
-  df[["region"]] <- region_name
-
-  qx <- as.quitte(df)
-  suppressWarnings({
-    levels(qx[["region"]]) <- toolCountry2isocode(
-      levels(qx[["region"]]),
-      mapping = c("DemocraticRepublicCongo" = "DRC")
+      value = as.numeric(value)
     )
-  })
 
-  qx <- dplyr::filter(qx, !is.na(qx[["region"]]))
-  x <- as.magpie(qx)
+  PartialProvincialEB2017[["unit"]] <- "PJ"
+  PartialProvincialEB2017[["region"]] <- "ZAF"
+  PartialProvincialEB2017[["type"]] <- "input"
+
+  CombinedElc <- excel_data$`CombinedElc+LiqFuels`
+  # Use row 1 as column names
+  names(CombinedElc) <- make.unique(
+    as.character(unlist(CombinedElc[1, ])))
+
+  # Remove the first row
+  CombinedElc <- CombinedElc[-c(1), ]
+  CombinedElc[["unit"]] <- "PJ"
+  CombinedElc[["region"]] <- "ZAF"
+  CombinedElc[["type"]] <- "input"
 
   list(x = x,
        weight = NULL,
-       description = c(category = "Electricity Demand",
-                       type = "Electricity Demand",
-                       filename = "OSeMOSYS-DRC dataset for the Power Sector.xlsx",
-                       `Indicative size (MB)` = 0.7,
+       class = "list",
+       description = c(category = "Input, output of South Africa",
+                       type = "Power mix",
+                       filename = "South African Disaggregated Provincial Electricity and Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx",
+                       `Indicative size (MB)` = 0.6,
                        dimensions = "3D",
-                       unit = "GWh",
+                       unit = "various",
                        Confidential = "E3M"))
 }
 
@@ -78,11 +100,7 @@ downloadSouthAfrica <- function() {
 
   for (f in files) {
     utils::download.file(
-      url = paste0(
-        base_url,
-        utils::URLencode(f, reserved = FALSE),
-        "?download=1"
-      ),
+      url = paste0(base_url, utils::URLencode(f), "?download=1"),
       destfile = f,
       mode = "wb",
       quiet = FALSE

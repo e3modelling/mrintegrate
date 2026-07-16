@@ -4,7 +4,7 @@
 #' and national energy balance statistics for Senegal. The function imports
 #' and formats for electricity production data or detailed energy balance data.
 #'
-#' @return The read-in data as a MAgPIE object.
+#' @return The read-in data.
 #'
 #' @author Fotis Sioutas
 #'
@@ -164,7 +164,7 @@ readSenegal <- function() {
                        filename = "Senegal-Data.xlsx",
                        `Indicative size (MB)` = 0.12,
                        dimensions = "3D",
-                       unit = "GWh",
+                       unit = "various",
                        Confidential = "E3M"))
 }
 

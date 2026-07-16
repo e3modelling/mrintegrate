@@ -3,7 +3,7 @@
 #' Reads RE-INTEGRATE datasets containing electricity production by sector
 #' and national energy balance statistics for DemocraticRepublicCongo.
 #'
-#' @return The read-in data as a MAgPIE object.
+#' @return The read-in data.
 #'
 #' @author Fotis Sioutas
 #'
@@ -383,7 +383,7 @@ readDemocraticRepublicCongo <- function() {
                        filename = "OSeMOSYS-DRC dataset for the Power Sector.xlsx",
                        `Indicative size (MB)` = 0.7,
                        dimensions = "3D",
-                       unit = "GWh",
+                       unit = "various",
                        Confidential = "E3M"))
 }
 
