@@ -7,26 +7,19 @@
 \usage{
 downloadSenegal()
 
-readSenegal(subtype = "EleProd")
-}
-\arguments{
-\item{subtype}{Character string specifying the dataset to import.
-Supported values are "EleProd" and "EnergyBalances".}
+readSenegal()
 }
 \value{
 The read-in data as a MAgPIE object.
 }
 \description{
 Reads RE-INTEGRATE datasets containing electricity production by sector
-and national energy balance statistics for Senegal. Depending on the
-selected subtype, the function imports and formats either electricity
-production data ("EleProd") or detailed energy balance data
-("EnergyBalances"), returning the results as a MAgPIE object.
+and national energy balance statistics for Senegal. The function imports
+and formats for electricity production data or detailed energy balance data.
 }
 \examples{
 \dontrun{
-elec <- readSource("Senegal", subtype = "EleProd")
-balances <- readSource("Senegal", subtype = "EnergyBalances")
+Senegal <- readSource("Senegal")
 }
 
 }
