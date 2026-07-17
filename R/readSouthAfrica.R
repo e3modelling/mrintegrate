@@ -12,10 +12,10 @@
 #' SouthAfrica <- readSource("SouthAfrica")
 #' }
 #'
-#' @importFrom stringr str_remove
-#' @importFrom readxl read_excel
-#' @importFrom dplyr mutate rename select filter %>%
+#' @importFrom readxl read_excel excel_sheets
+#' @importFrom dplyr mutate rename select filter slice left_join %>%
 #' @importFrom tidyr fill pivot_longer
+#' @importFrom stringr str_remove
 #' @importFrom zoo na.locf
 #' @importFrom quitte as.quitte
 #' @export
@@ -23,7 +23,7 @@
 #'
 readSouthAfrica <- function() {
 
-  file <- "South African Disaggregated Provincial Electricity and Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx"
+  file <- "SouthAfricaEnergyBalance2017.xlsx"
 
   sheet_names <- excel_sheets(file)
 
@@ -233,36 +233,39 @@ readSouthAfrica <- function() {
 }
 
 #' @rdname readSouthAfrica
-#' @importFrom utils download.file
+#' @importFrom utils download.file URLencode
 #' @export
 #' @order 1
 downloadSouthAfrica <- function() {
 
   base_url <- "https://zenodo.org/records/14945793/files/"
 
-  files <- c(
-    "South African Disaggregated Provincial Electricity and Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx"
+  remote_file <- paste(
+    "South African Disaggregated Provincial Electricity",
+    "and Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx"
   )
 
-  for (f in files) {
-    utils::download.file(
-      url = paste0(base_url, utils::URLencode(f), "?download=1"),
-      destfile = f,
-      mode = "wb",
-      quiet = FALSE
-    )
+  local_file <- "SouthAfricaEnergyBalance2017.xlsx"
 
-    if (!file.exists(f)) {
-      stop("Download failed: ", f, " was not created.")
-    }
+  download_url <- paste0(
+    base_url,
+    utils::URLencode(remote_file, reserved = FALSE),
+    "?download=1"
+  )
+
+  utils::download.file(
+    url = download_url,
+    destfile = local_file,
+    mode = "wb",
+    quiet = FALSE
+  )
+
+  if (!file.exists(local_file)) {
+    stop("Download failed: ", local_file, " was not created.")
   }
 
   list(
-    url = paste0(
-      base_url,
-      utils::URLencode(files, reserved = FALSE),
-      "?download=1"
-    ),
+    url = download_url,
     doi = "10.5281/zenodo.14945793",
     title = paste(
       "South African Disaggregated Provincial Electricity",
