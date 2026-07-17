@@ -10,7 +10,7 @@ downloadSouthAfrica()
 readSouthAfrica()
 }
 \value{
-The read-in data as a MAgPIE object.
+The read-in data.
 }
 \description{
 Reads RE-INTEGRATE datasets containing electricity production by sector
@@ -18,7 +18,7 @@ and national energy balance statistics for South Africa
 }
 \examples{
 \dontrun{
-DRC <- readSource("SouthAfrica")
+SouthAfrica <- readSource("SouthAfrica")
 }
 
 }

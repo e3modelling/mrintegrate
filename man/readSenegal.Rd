@@ -10,7 +10,7 @@ downloadSenegal()
 readSenegal()
 }
 \value{
-The read-in data as a MAgPIE object.
+The read-in data.
 }
 \description{
 Reads RE-INTEGRATE datasets containing electricity production by sector

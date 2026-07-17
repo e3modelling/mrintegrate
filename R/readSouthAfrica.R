@@ -143,32 +143,82 @@ readSouthAfrica <- function() {
 
   # Use row 2 as column names
   names(SectorMap1) <- make.unique(
-    as.character(unlist(SectorMap1))
+    as.character(unlist(SectorMap1[1, ]))
   )
 
   # Remove the first rows
   SectorMap1 <- SectorMap1[-c(1), ]
 
-  SectorMap2 <- SectorMap[c(1:37),c(4:35)]
+  SectorMap1[["region"]] <- "ZAF"
+  SectorMap1[["type"]] <- "input"
+
+  SectorMap2 <- SectorMap[c(3:nrow(SectorMap)),c(4:length(SectorMap))]
 
   # Use row 2 as column names
-  names(SectorMap1) <- make.unique(
-    as.character(unlist(SectorMap1))
+  names(SectorMap2) <- make.unique(
+    as.character(unlist(SectorMap2[2, ]))
   )
 
   # Remove the first rows
-  SectorMap1 <- SectorMap1[-c(1), ]
+  SectorMap2 <- SectorMap2[-c(2), ]
+  names(SectorMap2)[1] <- "Sector Raw"
+  names(SectorMap2)[2] <- "Fuel"
+  SectorMap2 <- SectorMap2[-c(2), ]
 
-  names(Liquid_Fuels)[5] <- "value"
+
+  SectorMap2_long <- SectorMap2 %>%
+    pivot_longer(
+      cols = -c(`Sector Raw`,Fuel, CombinedString, Check),
+      names_to = "sector",
+      values_to = "value",
+      values_drop_na = TRUE
+    )
+
+  # Mapping stored in the first row
+  sector_groups <- SectorMap2 %>%
+    slice(1) %>%
+    pivot_longer(
+      cols = -c(`Sector Raw`, Fuel, CombinedString, Check),
+      names_to = "sector",
+      values_to = "sector_group",
+      values_drop_na = TRUE
+    ) %>%
+    select(sector, sector_group)
+
+  # Pivot the actual data, excluding the first row
+  SectorMap2_long <- SectorMap2 %>%
+    slice(-1) %>%
+    pivot_longer(
+      cols = -c(`Sector Raw`, Fuel, CombinedString, Check),
+      names_to = "sector",
+      values_to = "value",
+      values_drop_na = TRUE
+    ) %>%
+    left_join(
+      sector_groups,
+      by = "sector"
+    ) %>%
+    mutate(
+      value = as.numeric(value)
+    ) %>%
+    select(
+      `Sector Raw`,
+      Fuel,
+      CombinedString,
+      Check,
+      sector,
+      sector_group,
+      value
+    )
 
   Liquid_Fuels[["unit"]] <- "PJ"
   Liquid_Fuels[["region"]] <- "ZAF"
   Liquid_Fuels[["type"]] <- "input"
 
   x <- stats::setNames(list(PartialProvincialEB2017, CombinedElc, Electricity,
-                            Liquid_Fuels),
+                            Liquid_Fuels, SectorMap1, SectorMap2_long),
                        c("PartialProvincialEB2017", "CombinedElc", "ElectrityProduction",
-                         "Liquid_Fuels"))
+                         "Liquid_Fuels", "SectorMap1", "SectorMap2"))
 
   list(x = x,
        weight = NULL,
