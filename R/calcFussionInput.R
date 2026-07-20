@@ -65,8 +65,51 @@ calcFussionInput <- function() {
 
   DEMAND_BALANC_SEN <- Senegal[[2]]
 
-  x <- stats::setNames(list(ElecProd),
-                       c("ElecProd"))
+  FratoEng <- read.csv(system.file(package = "mrintegrate", file.path("extdata", "french_to_english_mapping.csv")))
+
+  translateDimension <- function(x, dim, mapping) {
+
+    current_items <- getItems(x, dim = dim)
+
+    rel <- data.frame(
+      old = current_items,
+      new = current_items,
+      stringsAsFactors = FALSE
+    )
+
+    matched <- match(rel$old, mapping$old)
+
+    rel$new[!is.na(matched)] <-
+      mapping$new[matched[!is.na(matched)]]
+
+    rel <- rel %>%
+      dplyr::filter(
+        !is.na(old),
+        !is.na(new),
+        old != "",
+        new != ""
+      ) %>%
+      dplyr::distinct(old, .keep_all = TRUE)
+
+    toolAggregate(
+      x,
+      dim = dim,
+      rel = rel,
+      from = "old",
+      to = "new"
+    )
+  }
+
+  for (d in c(3.1, 3.3, 3.4, 3.5)) {
+    DEMAND_BALANC_SEN <- translateDimension(
+      DEMAND_BALANC_SEN,
+      dim = d,
+      mapping = FratoEng
+    )
+  }
+
+  x <- stats::setNames(list(ElecProd, DEMAND_BALANC_SEN),
+                       c("ElecProd", "DEMAND_BALANC_SEN"))
 
   list( x = x,
         class = "list",
