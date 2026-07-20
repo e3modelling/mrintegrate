@@ -16,7 +16,7 @@
 #' @examples
 #'
 #' \dontrun{
-#' a <- calcOutput(type = "FussionOutout", , aggregate = FALSE)
+#' a <- calcOutput(type = "FussionOutput", aggregate = FALSE)
 #' }
 #'
 #' @importFrom quitte as.quitte
@@ -24,7 +24,7 @@
 #' @importFrom dplyr case_when distinct filter left_join mutate recode rename_with transmute
 #'
 
-calcFussionOutout <- function() {
+calcFussionOutput <- function() {
   DRC <- readSource("DemocraticRepublicCongo")
 
   DRC_results <- as.quitte(DRC[[1]])

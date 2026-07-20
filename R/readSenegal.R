@@ -154,7 +154,7 @@ readSenegal <- function() {
   Consumption <- as.magpie(qx)
 
   x <- stats::setNames(list(EleProd, Consumption),
-                       c("ElectrityProduction", "EnergyBalnce"))
+                       c("ElectrityProduction", "EnergyBalance"))
 
   list(x = x,
        weight = NULL,
