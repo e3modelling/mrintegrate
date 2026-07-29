@@ -2,20 +2,18 @@
 % Please edit documentation in R/calcFussionOutput.R
 \name{calcFussionOutput}
 \alias{calcFussionOutput}
-\title{Calculate Democratic Republic of the Congo model outputs
-Reads the Democratic Republic of the Congo source data, converts the model
-results to a quitte data frame, and maps OSeMOSYS technologies, commodities,}
+\title{Calculate Democratic Republic of the Congo and ETHIOPIA model outputs
+Reads the Democratic Republic of the Congo and ETHIOPIA source data,
+converts the model results to a quitte data frame,
+and maps technologies, commodities, emissions, costs, capacity, generation,
+demand, and activity variables to IAMC-style variable names.}
 \usage{
 calcFussionOutput()
 }
 \value{
-A list of DRC reuslts
+A list of ouput reuslts
 }
 \description{
-emissions, costs, capacity, generation, demand, and activity variables to
-IAMC-style variable names.
-}
-\details{
 Technology and commodity descriptions are obtained from the SETS table.
 The resulting data frame retains the original model dimensions and adds
 descriptive technology, fuel, and IAMC variable columns.

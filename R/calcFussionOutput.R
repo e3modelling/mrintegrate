@@ -1,15 +1,14 @@
-#' Calculate Democratic Republic of the Congo model outputs
-#' Reads the Democratic Republic of the Congo source data, converts the model
-#' results to a quitte data frame, and maps OSeMOSYS technologies, commodities,
-#'
-#' emissions, costs, capacity, generation, demand, and activity variables to
-#' IAMC-style variable names.
+#' Calculate Democratic Republic of the Congo and ETHIOPIA model outputs
+#' Reads the Democratic Republic of the Congo and ETHIOPIA source data,
+#' converts the model results to a quitte data frame,
+#' and maps technologies, commodities, emissions, costs, capacity, generation,
+#' demand, and activity variables to IAMC-style variable names.
 #'
 #' Technology and commodity descriptions are obtained from the SETS table.
 #' The resulting data frame retains the original model dimensions and adds
 #' descriptive technology, fuel, and IAMC variable columns.
 #'
-#' @return A list of DRC reuslts
+#' @return A list of ouput reuslts
 #'
 #' @author Fotis Sioutas
 #'
@@ -156,13 +155,103 @@ calcFussionOutput <- function() {
         sub("\\|$", "", .)
     )
 
-  x <- stats::setNames(list(DRC_results),
-                       c("DRC_output_results"))
+  DRC_results[["model"]] <- "RE-INTEGRATE"
+
+  ETH <- readSource("ETHIOPIA")  %>% as.quitte()
+
+  ETH_results <- ETH %>%
+    mutate(
+      e = recode(e, EMIC02 = "CO2"),
+      variable_iamc_base = unname(variable_mapping[variable])
+    ) %>%
+    left_join(technology_map, by = "t") %>%
+    left_join(commodity_map, by = "f") %>%
+    mutate(
+      variable_iamc = case_when(
+        variable == "AnnualEmissions" ~
+          paste("Emissions", e, sep = "|"),
+
+        variable == "AnnualTechnologyEmission" ~
+          paste(
+            "Emissions", e, "Energy", "Supply", "Electricity",
+            technology_iamc,
+            sep = "|"
+          ),
+
+        variable %in% c(
+          "AnnualFixedOperatingCost",
+          "AnnualVariableOperatingCost",
+          "CapitalInvestment",
+          "NewCapacity",
+          "ProductionByTechnologyAnnual",
+          "TotalCapacityAnnual",
+          "TotalTechnologyAnnualActivity",
+          "Capital_costs",
+          "Fixed_costs",
+          "Variable_costs",
+          "SalvageValue",
+          "DiscountedSalvageValue"
+        ) ~ paste(variable_iamc_base, technology_iamc, sep = "|"),
+
+        variable == "Demand" ~
+          paste(variable_iamc_base, fuel_iamc, sep = "|"),
+
+        variable == "ProductionByTechnology" ~
+          paste(
+            variable_iamc_base,
+            technology_iamc,
+            paste0("Time Slice ", l),
+            sep = "|"
+          ),
+
+        variable == "RateOfActivity" ~
+          paste(
+            variable_iamc_base,
+            technology_iamc,
+            paste0("Mode ", m),
+            paste0("Time Slice ", l),
+            sep = "|"
+          ),
+
+        variable == "TotalAnnualTechnologyActivityByMode" ~
+          paste(
+            variable_iamc_base,
+            technology_iamc,
+            paste0("Mode ", m),
+            sep = "|"
+          ),
+
+        variable == "UseByTechnologyAnnual" ~
+          paste(
+            variable_iamc_base,
+            fuel_iamc,
+            technology_iamc,
+            sep = "|"
+          ),
+
+        variable == "Fuel_costs" ~
+          paste(
+            variable_iamc_base,
+            technology_iamc,
+            fuel_iamc,
+            sep = "|"
+          ),
+
+        TRUE ~ variable_iamc_base
+      ),
+      variable_iamc = variable_iamc %>%
+        gsub("\\|NA(?=\\||$)", "", ., perl = TRUE) %>%
+        gsub("\\|+", "|", .) %>%
+        sub("\\|$", "", .)
+    )
+
+  x <- stats::setNames(list(DRC_results, ETH_results),
+                       c("DRC_output_results", "ETH_output_results"))
 
   list( x = x,
         class = "list",
         weight = NULL,
         unit = "various",
-        description = paste( "Democratic Republic of the Congo OSeMOSYS model outputs",
+        description = paste( "Democratic Republic of the Congo and ETHIOPIA model outputs",
                              "mapped to IAMC-style variables"))
   }
