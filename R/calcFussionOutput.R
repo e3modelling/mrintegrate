@@ -24,13 +24,129 @@
 #'
 
 calcFussionOutput <- function() {
-  DRC <- readSource("DemocraticRepublicCongo")
+  DRC <- readSource(
+    "DemocraticRepublicCongo"
+  )
 
-  DRC_results <- as.quitte(DRC[[1]])
-  SETS <- as.data.frame(DRC[[2]]) %>%
-    rename_with(~ sub("^SETS\\.", "", .x))
+  DRC_results <- as.quitte(
+    DRC[[1]]
+  )
 
-  variable_mapping <- c(
+  SETS <- as.data.frame(
+    DRC[[2]]
+  ) %>%
+    rename_with(
+      ~ sub(
+        "^SETS\\.",
+        "",
+        .x
+      )
+    )
+
+
+  # -------------------------------------------------------------------------
+  # Helper functions
+  # -------------------------------------------------------------------------
+
+  clean_iamc_variable <- function(x) {
+
+    x %>%
+      gsub(
+        "\\|NA(?=\\||$)",
+        "",
+        .,
+        perl = TRUE
+      ) %>%
+      gsub(
+        "\\|+",
+        "|",
+        .
+      ) %>%
+      sub(
+        "\\|$",
+        "",
+        .
+      )
+  }
+
+
+  convert_mode_to_character <- function(x) {
+
+    if ("m" %in% names(x)) {
+      x$m <- as.character(
+        x$m
+      )
+    }
+
+    x
+  }
+
+
+  # -------------------------------------------------------------------------
+  # DRC technology and commodity maps
+  # -------------------------------------------------------------------------
+
+  technology_map <- SETS %>%
+    transmute(
+      t = as.character(
+        Code
+      ),
+      technology_iamc = as.character(
+        Description
+      )
+    ) %>%
+    mutate(
+      t = na_if(
+        trimws(t),
+        ""
+      ),
+      technology_iamc = na_if(
+        trimws(technology_iamc),
+        ""
+      )
+    ) %>%
+    filter(
+      !is.na(t)
+    ) %>%
+    distinct(
+      t,
+      .keep_all = TRUE
+    )
+
+
+  commodity_map <- SETS %>%
+    transmute(
+      f = as.character(
+        Code.1
+      ),
+      fuel_iamc = as.character(
+        Description.1
+      )
+    ) %>%
+    mutate(
+      f = na_if(
+        trimws(f),
+        ""
+      ),
+      fuel_iamc = na_if(
+        trimws(fuel_iamc),
+        ""
+      )
+    ) %>%
+    filter(
+      !is.na(f)
+    ) %>%
+    distinct(
+      f,
+      .keep_all = TRUE
+    )
+
+
+  # =========================================================================
+  # DEMOCRATIC REPUBLIC OF THE CONGO
+  # =========================================================================
+
+  DRC_variable_mapping <- c(
     AnnualEmissions =
       "Emissions",
 
@@ -92,41 +208,23 @@ calcFussionOutput <- function() {
       "Fuel Cost|Electricity"
   )
 
-  technology_map <- SETS %>%
-    transmute(
-      t = Code,
-      technology_iamc = Description
-    ) %>%
-    filter(
-      !is.na(t)
-    ) %>%
-    distinct(
-      t,
-      .keep_all = TRUE
-    )
-
-  commodity_map <- SETS %>%
-    transmute(
-      f = Code.1,
-      fuel_iamc = Description.1
-    ) %>%
-    filter(
-      !is.na(f)
-    ) %>%
-    distinct(
-      f,
-      .keep_all = TRUE
-    )
 
   DRC_results <- DRC_results %>%
     mutate(
+      t = as.character(
+        t
+      ),
+      f = as.character(
+        f
+      ),
       e = recode(
         e,
         EMIC02 = "CO2"
       ),
-
       variable_iamc_base = unname(
-        variable_mapping[as.character(variable)]
+        DRC_variable_mapping[
+          as.character(variable)
+        ]
       )
     ) %>%
     left_join(
@@ -138,7 +236,28 @@ calcFussionOutput <- function() {
       by = "f"
     ) %>%
     mutate(
+      technology_iamc = coalesce(
+        na_if(
+          trimws(technology_iamc),
+          ""
+        ),
+        na_if(
+          trimws(t),
+          ""
+        )
+      ),
+      fuel_iamc = coalesce(
+        na_if(
+          trimws(fuel_iamc),
+          ""
+        ),
+        na_if(
+          trimws(f),
+          ""
+        )
+      ),
       variable_iamc = case_when(
+
         variable == "AnnualEmissions" ~
           paste(
             "Emissions",
@@ -169,7 +288,10 @@ calcFussionOutput <- function() {
             variable_iamc_base,
             fuel_iamc,
             technology_iamc,
-            paste0("Time Slice ", l),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -185,8 +307,14 @@ calcFussionOutput <- function() {
           paste(
             variable_iamc_base,
             technology_iamc,
-            paste0("Mode ", m),
-            paste0("Time Slice ", l),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -194,7 +322,10 @@ calcFussionOutput <- function() {
           paste(
             variable_iamc_base,
             technology_iamc,
-            paste0("Mode ", m),
+            paste0(
+              "Mode ",
+              m
+            ),
             sep = "|"
           ),
 
@@ -224,49 +355,55 @@ calcFussionOutput <- function() {
           variable_iamc_base
       ),
 
-      variable_iamc = variable_iamc %>%
-        gsub(
-          "\\|NA(?=\\||$)",
-          "",
-          .,
-          perl = TRUE
-        ) %>%
-        gsub(
-          "\\|+",
-          "|",
-          .
-        ) %>%
-        sub(
-          "\\|$",
-          "",
-          .
-        )
+      variable_iamc = clean_iamc_variable(
+        variable_iamc
+      ),
+
+      model = "RE-INTEGRATE"
     )
 
-  DRC_results[["model"]] <- "RE-INTEGRATE"
 
-  ETH <- readSource("ETHIOPIA") %>%
+  # =========================================================================
+  # ETHIOPIA
+  # =========================================================================
+
+  ETH <- readSource(
+    "ETHIOPIA"
+  ) %>%
     as.quitte()
 
-  variable_mapping <- c(
+
+  ETH_variable_mapping <- c(
     TotalCapacityAnnual =
       "Capacity|Electricity",
+
     AnnualizedInvestmentCost =
       "Cost|Energy Supply|Electricity|Annualized Investment",
+
     AnnualTechnologyEmission =
       "Emissions|Energy|Supply|Electricity",
+
     ProductionByTechnologyByMode =
       "Secondary Energy|Electricity"
   )
 
+
   ETH_results <- ETH %>%
     mutate(
+      t = as.character(
+        t
+      ),
+      f = as.character(
+        f
+      ),
       e = recode(
         e,
         EMIC02 = "CO2"
       ),
       variable_iamc_base = unname(
-        variable_mapping[as.character(variable)]
+        ETH_variable_mapping[
+          as.character(variable)
+        ]
       )
     ) %>%
     left_join(
@@ -278,7 +415,28 @@ calcFussionOutput <- function() {
       by = "f"
     ) %>%
     mutate(
+      technology_iamc = coalesce(
+        na_if(
+          trimws(technology_iamc),
+          ""
+        ),
+        na_if(
+          trimws(t),
+          ""
+        )
+      ),
+      fuel_iamc = coalesce(
+        na_if(
+          trimws(fuel_iamc),
+          ""
+        ),
+        na_if(
+          trimws(f),
+          ""
+        )
+      ),
       variable_iamc = case_when(
+
         variable == "AnnualTechnologyEmission" ~
           paste(
             "Emissions",
@@ -295,8 +453,14 @@ calcFussionOutput <- function() {
             variable_iamc_base,
             fuel_iamc,
             technology_iamc,
-            paste0("Mode ", m),
-            paste0("Time Slice ", l),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -310,96 +474,141 @@ calcFussionOutput <- function() {
             sep = "|"
           ),
 
+        !is.na(technology_iamc) ~
+          paste(
+            variable_iamc_base,
+            technology_iamc,
+            sep = "|"
+          ),
+
+        !is.na(fuel_iamc) ~
+          paste(
+            variable_iamc_base,
+            fuel_iamc,
+            sep = "|"
+          ),
+
         TRUE ~
           variable_iamc_base
       ),
 
-      variable_iamc = variable_iamc %>%
-        gsub(
-          "\\|NA(?=\\||$)",
-          "",
-          .,
-          perl = TRUE
-        ) %>%
-        gsub(
-          "\\|+",
-          "|",
-          .
-        ) %>%
-        sub(
-          "\\|$",
-          "",
-          .
-        )
+      variable_iamc = clean_iamc_variable(
+        variable_iamc
+      ),
+
+      model = "RE-INTEGRATE"
     )
 
-  MUS <- readSource("MAURITIUS")
 
-  variable_mapping <- c(
+  # =========================================================================
+  # MAURITIUS
+  # =========================================================================
+
+  MUS <- readSource(
+    "MAURITIUS"
+  )
+
+
+  MUS_variable_mapping <- c(
     AccumulatedNewCapacity =
       "Accumulated Capacity Additions|Electricity",
+
     AnnualFixedOperatingCost =
       "Cost|Energy Supply|Electricity|Fixed O&M",
+
     AnnualizedInvestmentCost =
       "Cost|Energy Supply|Electricity|Annualized Investment",
+
     AnnualTechnologyEmission =
       "Emissions|Energy|Supply|Electricity",
+
     AnnualTechnologyEmissionByMode =
       "Emissions|Energy|Supply|Electricity",
+
     AnnualVariableOperatingCost =
       "Cost|Energy Supply|Electricity|Variable O&M",
+
     CapitalInvestment =
       "Investment|Energy Supply|Electricity",
+
     Demand =
       "Final Energy|Electricity",
+
     DiscountedSalvageValue =
       "Model Accounting|Discounted Salvage Value",
+
     DiscountRate =
       "Model Accounting|Discount Rate",
+
     InputToNewCapacity =
       "Technology Input|New Capacity",
+
     InputToTotalCapacity =
       "Technology Input|Total Capacity",
+
     NewCapacity =
       "Capacity Additions|Electricity",
+
     ObjectiveValue =
       "Model Accounting|Objective Value",
+
     ProductionByTechnologyByMode =
       "Secondary Energy|Electricity",
+
     RateOfActivity =
       "Activity|Electricity",
+
     RateOfProductionByTechnologyByMode =
       "Secondary Energy|Electricity|Rate",
+
     RateOfTotalActivity =
       "Activity|Electricity|Total Rate",
+
     RateOfUseByTechnologyByMode =
       "Technology Input|Rate",
+
     SalvageValue =
       "Model Accounting|Salvage Value",
+
     TechnologyEmissionsPenalty =
       "Cost|Emissions Penalty",
+
     TotalAnnualTechnologyActivityByMode =
       "Activity|Electricity",
+
     TotalCapacityAnnual =
       "Capacity|Electricity",
+
     TotalTechnologyAnnualActivity =
       "Activity|Electricity",
+
     TotalTechnologyModelPeriodActivity =
       "Activity|Electricity|Model Period",
+
     Trade =
       "Trade|Energy",
+
     UseByTechnologyByMode =
       "Technology Input"
   )
 
+
   MUS_results <- MUS %>%
     mutate(
+      t = as.character(
+        t
+      ),
+      f = as.character(
+        f
+      ),
       e = recode(
         e,
         CO2E = "CO2"
       ),
       variable_iamc_base = unname(
-        variable_mapping[as.character(variable)]
+        MUS_variable_mapping[
+          as.character(variable)
+        ]
       )
     ) %>%
     left_join(
@@ -411,7 +620,28 @@ calcFussionOutput <- function() {
       by = "f"
     ) %>%
     mutate(
+      technology_iamc = coalesce(
+        na_if(
+          trimws(technology_iamc),
+          ""
+        ),
+        na_if(
+          trimws(t),
+          ""
+        )
+      ),
+      fuel_iamc = coalesce(
+        na_if(
+          trimws(fuel_iamc),
+          ""
+        ),
+        na_if(
+          trimws(f),
+          ""
+        )
+      ),
       variable_iamc = case_when(
+
         variable == "AnnualTechnologyEmission" ~
           paste(
             "Emissions",
@@ -431,7 +661,10 @@ calcFussionOutput <- function() {
             "Supply",
             "Electricity",
             technology_iamc,
-            paste0("Mode ", m),
+            paste0(
+              "Mode ",
+              m
+            ),
             sep = "|"
           ),
 
@@ -445,8 +678,16 @@ calcFussionOutput <- function() {
         variable == "ProductionByTechnologyByMode" ~
           paste(
             variable_iamc_base,
+            fuel_iamc,
             technology_iamc,
-            paste0("Mode ", m),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -454,8 +695,14 @@ calcFussionOutput <- function() {
           paste(
             variable_iamc_base,
             technology_iamc,
-            paste0("Mode ", m),
-            paste0("Time Slice ", l),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -464,8 +711,14 @@ calcFussionOutput <- function() {
             variable_iamc_base,
             fuel_iamc,
             technology_iamc,
-            paste0("Mode ", m),
-            paste0("Time Slice ", l),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -474,8 +727,14 @@ calcFussionOutput <- function() {
             variable_iamc_base,
             fuel_iamc,
             technology_iamc,
-            paste0("Mode ", m),
-            paste0("Time Slice ", l),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -484,8 +743,14 @@ calcFussionOutput <- function() {
             variable_iamc_base,
             fuel_iamc,
             technology_iamc,
-            paste0("Mode ", m),
-            paste0("Time Slice ", l),
+            paste0(
+              "Mode ",
+              m
+            ),
+            paste0(
+              "Time Slice ",
+              l
+            ),
             sep = "|"
           ),
 
@@ -493,7 +758,10 @@ calcFussionOutput <- function() {
           paste(
             variable_iamc_base,
             technology_iamc,
-            paste0("Mode ", m),
+            paste0(
+              "Mode ",
+              m
+            ),
             sep = "|"
           ),
 
@@ -533,45 +801,54 @@ calcFussionOutput <- function() {
           variable_iamc_base
       ),
 
-      variable_iamc = variable_iamc %>%
-        gsub(
-          "\\|NA(?=\\||$)",
-          "",
-          .,
-          perl = TRUE
-        ) %>%
-        gsub(
-          "\\|+",
-          "|",
-          .
-        ) %>%
-        sub(
-          "\\|$",
-          "",
-          .
-        )
+      variable_iamc = clean_iamc_variable(
+        variable_iamc
+      ),
+
+      model = "RE-INTEGRATE"
     )
 
-  for (df in c("DRC_results", "ETH_results", "MUS_results")) {
-    if ("m" %in% names(get(df))) {
-      x <- get(df)
-      x$m <- as.character(x$m)
-      assign(df, x)
-    }
-  }
 
-  results <- dplyr::bind_rows(
+  # -------------------------------------------------------------------------
+  # Make mode type consistent before combining
+  # -------------------------------------------------------------------------
+
+  DRC_results <- convert_mode_to_character(
+    DRC_results
+  )
+
+  ETH_results <- convert_mode_to_character(
+    ETH_results
+  )
+
+  MUS_results <- convert_mode_to_character(
+    MUS_results
+  )
+
+
+  # -------------------------------------------------------------------------
+  # Combine all countries
+  # -------------------------------------------------------------------------
+
+  results <- bind_rows(
     DRC_results,
     ETH_results,
     MUS_results
   )
 
-  results <- as.quitte(results)
+  results <- as.quitte(
+    results
+  )
 
-  list( x = results,
-        class = "quitte",
-        weight = NULL,
-        unit = "various",
-        description = paste( "Democratic Republic of the Congo, MAURITIUS and ETHIOPIA model outputs",
-                             "mapped to IAMC-style variables"))
+
+  list(
+    x = results,
+    class = "quitte",
+    weight = NULL,
+    unit = "various",
+    description = paste(
+      "Democratic Republic of the Congo, Mauritius and Ethiopia",
+      "model outputs mapped to IAMC-style variables"
+    )
+  )
   }
