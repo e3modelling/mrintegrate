@@ -836,8 +836,39 @@ calcFussionOutput <- function() {
     MUS_results
   )
 
+  Senegal <- readSource("Senegal")
+  Senegal <- Senegal[[1]]
+  Senegal <- as.quitte(Senegal)
+
   results <- as.quitte(
     results
+  )
+
+  results <- results %>%
+    dplyr::mutate(
+      model = as.character(model),
+      scenario = as.character(scenario),
+      region = as.character(region),
+      variable = as.character(variable),
+      unit = as.character(unit),
+      type = as.character(type)
+    )
+
+  Senegal <- Senegal %>%
+    dplyr::mutate(
+      model = as.character(model),
+      scenario = as.character(scenario),
+      region = as.character(region),
+      variable = as.character(variable),
+      unit = as.character(unit),
+      type = as.character(type)
+    )
+
+  Senegal[["variable_iamc"]] <- "Secondary Energy|Electricity"
+
+  results <- dplyr::bind_rows(
+    results,
+    Senegal
   )
 
 
