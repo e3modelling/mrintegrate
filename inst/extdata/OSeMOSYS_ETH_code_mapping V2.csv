@@ -1,0 +1,102 @@
+Code,OSeMOSYS-style structure,Meaning,IAMC Variable
+DEMAGRELCSEF,DEM|AGR|ELC|SEF,Agricultural electricity demand - SEF category,Agriculture|Electricity|SEF
+DEMAGRMOTBIO,DEM|AGR|MOT|BIO,Agricultural motive-power demand - biomass,Agriculture|Motive Power|Biomass
+DEMAGRMOTDSL,DEM|AGR|MOT|DSL,Agricultural motive-power demand - diesel,Agriculture|Motive Power|Diesel
+DEMAGRMOTELC,DEM|AGR|MOT|ELC,Agricultural motive-power demand - electricity,Agriculture|Motive Power|Electricity
+DEMAGRMOTLPG,DEM|AGR|MOT|LPG,Agricultural motive-power demand - LPG,Agriculture|Motive Power|LPG
+DEMAGRMOTNGS,DEM|AGR|MOT|NGS,Agricultural motive-power demand - natural gas,Agriculture|Motive Power|Gas
+DEMCOMELCSEF,DEM|COM|ELC|SEF,Commercial electricity demand - SEF category,Commercial|Electricity|SEF
+DEMCOMHETBIO,DEM|COM|HET|BIO,Commercial heating demand - biomass,Commercial|Heating|Biomass
+DEMCOMHETELC,DEM|COM|HET|ELC,Commercial heating demand - electricity,Commercial|Heating|Electricity
+DEMCOMHETLPG,DEM|COM|HET|LPG,Commercial heating demand - LPG,Commercial|Heating|LPG
+DEMCOMHETNGS,DEM|COM|HET|NGS,Commercial heating demand - natural gas,Commercial|Heating|Gas
+DEMINDELCSEF,DEM|IND|ELC|SEF,Industrial electricity demand - SEF category,Industry|Electricity|SEF
+DEMINDHHEBIO,DEM|IND|HHE|BIO,Industrial high-temperature heat demand - biomass,Industry|High Temperature Heat|Biomass
+DEMINDHHECOA,DEM|IND|HHE|COA,Industrial high-temperature heat demand - coal,Industry|High Temperature Heat|Coal
+DEMINDHHEDSL,DEM|IND|HHE|DSL,Industrial high-temperature heat demand - diesel,Industry|High Temperature Heat|Diesel
+DEMINDHHEELC,DEM|IND|HHE|ELC,Industrial high-temperature heat demand - electricity,Industry|High Temperature Heat|Electricity
+DEMINDHHEHDG,DEM|IND|HHE|HDG,Industrial high-temperature heat demand - hydrogen,Industry|High Temperature Heat|Hydrogen
+DEMINDHHELPG,DEM|IND|HHE|LPG,Industrial high-temperature heat demand - LPG,Industry|High Temperature Heat|LPG
+DEMINDHHENGS,DEM|IND|HHE|NGS,Industrial high-temperature heat demand - natural gas,Industry|High Temperature Heat|Gas
+DEMINDLHEBIO,DEM|IND|LHE|BIO,Industrial low-temperature heat demand - biomass,Industry|Low Temperature Heat|Biomass
+DEMINDLHECOA,DEM|IND|LHE|COA,Industrial low-temperature heat demand - coal,Industry|Low Temperature Heat|Coal
+DEMINDLHEDSL,DEM|IND|LHE|DSL,Industrial low-temperature heat demand - diesel,Industry|Low Temperature Heat|Diesel
+DEMINDLHEELC,DEM|IND|LHE|ELC,Industrial low-temperature heat demand - electricity,Industry|Low Temperature Heat|Electricity
+DEMINDLHEHDG,DEM|IND|LHE|HDG,Industrial low-temperature heat demand - hydrogen,Industry|Low Temperature Heat|Hydrogen
+DEMINDLHELPG,DEM|IND|LHE|LPG,Industrial low-temperature heat demand - LPG,Industry|Low Temperature Heat|LPG
+DEMINDLHENGS,DEM|IND|LHE|NGS,Industrial low-temperature heat demand - natural gas,Industry|Low Temperature Heat|Gas
+DEMOTHBIO,DEM|OTH|BIO,Other demand - biomass,Other|Biomass
+DEMOTHCOA,DEM|OTH|COA,Other demand - coal,Other|Coal
+DEMOTHELCSEF,DEM|OTH|ELC|SEF,Other electricity demand - SEF category,Other|Electricity|SEF
+DEMOTHNGS,DEM|OTH|NGS,Other demand - natural gas,Other|Gas
+DEMRESCKNBIO,DEM|RES|CKN|BIO,Residential cooking demand - biomass,Residential|Cooking|Biomass
+DEMRESCKNCOA,DEM|RES|CKN|COA,Residential cooking demand - coal,Residential|Cooking|Coal
+DEMRESCKNELC,DEM|RES|CKN|ELC,Residential cooking demand - electricity,Residential|Cooking|Electricity
+DEMRESCKNJET,DEM|RES|CKN|JET,Residential cooking demand - jet fuel,Residential|Cooking|Jet Fuel
+DEMRESCKNLPG,DEM|RES|CKN|LPG,Residential cooking demand - LPG,Residential|Cooking|LPG
+DEMRESCKNNGS,DEM|RES|CKN|NGS,Residential cooking demand - natural gas,Residential|Cooking|Gas
+DEMRESELCSEF,DEM|RES|ELC|SEF,Residential electricity demand - SEF category,Residential|Electricity|SEF
+DEMRESHETBIO,DEM|RES|HET|BIO,Residential heating demand - biomass,Residential|Heating|Biomass
+DEMRESHETCOA,DEM|RES|HET|COA,Residential heating demand - coal,Residential|Heating|Coal
+DEMRESHETELC,DEM|RES|HET|ELC,Residential heating demand - electricity,Residential|Heating|Electricity
+DEMRESHETJET,DEM|RES|HET|JET,Residential heating demand - jet fuel,Residential|Heating|Jet Fuel
+DEMRESHETLPG,DEM|RES|HET|LPG,Residential heating demand - LPG,Residential|Heating|LPG
+DEMRESHETNGS,DEM|RES|HET|NGS,Residential heating demand - natural gas,Residential|Heating|Gas
+DEMTRAAIRJET,DEM|TRA|AIR|JET,Aviation transport demand - jet fuel,Transportation|Aviation|Jet Fuel
+DEMTRAAIRSAF,DEM|TRA|AIR|SAF,Aviation transport demand - sustainable aviation fuel,Transportation|Aviation|SAF
+DEMTRABUSDSL,DEM|TRA|BUS|DSL,Bus transport demand - diesel,Transportation|Buses|Diesel
+DEMTRABUSELC,DEM|TRA|BUS|ELC,Bus transport demand - electricity,Transportation|Buses|Electricity
+DEMTRABUSHDG,DEM|TRA|BUS|HDG,Bus transport demand - hydrogen,Transportation|Buses|Hydrogen
+DEMTRABUSNGS,DEM|TRA|BUS|NGS,Bus transport demand - natural gas,Transportation|Buses|Gas
+DEMTRACARDSL,DEM|TRA|CAR|DSL,Car transport demand - diesel,Transportation|Cars|Diesel
+DEMTRACARELC,DEM|TRA|CAR|ELC,Car transport demand - electricity,Transportation|Cars|Electricity
+DEMTRACARGSL,DEM|TRA|CAR|GSL,Car transport demand - gasoline,Transportation|Cars|Gasoline
+DEMTRACARNGS,DEM|TRA|CAR|NGS,Car transport demand - natural gas,Transportation|Cars|Gas
+DEMTRAMCYELC,DEM|TRA|MCY|ELC,Motorcycle transport demand - electricity,Transportation|Motorcycles|Electricity
+DEMTRAMCYGSL,DEM|TRA|MCY|GSL,Motorcycle transport demand - gasoline,Transportation|Motorcycles|Gasoline
+DEMTRAMINBUSDSL,DEM|TRA|MINBUS|DSL,Minibus transport demand - diesel,Transportation|Minibus|Diesel
+DEMTRAMINBUSELC,DEM|TRA|MINBUS|ELC,Minibus transport demand - electricity,Transportation|Minibus|Electricity
+DEMTRAMINBUSGSL,DEM|TRA|MINBUS|GSL,Minibus transport demand - gasoline,Transportation|Minibus|Gasoline
+DEMTRATCKDSL,DEM|TRA|TCK|DSL,Truck transport demand - diesel,Transportation|Trucks|Diesel
+DEMTRATCKELC,DEM|TRA|TCK|ELC,Truck transport demand - electricity,Transportation|Trucks|Electricity
+DEMTRATCKHDG,DEM|TRA|TCK|HDG,Truck transport demand - hydrogen,Transportation|Trucks|Hydrogen
+IMPCOA,IMP|COA,Coal imports,Imports|Coal
+IMPDSL,IMP|DSL,Diesel imports,Imports|Diesel
+IMPFOL,IMP|FOL,Fuel-oil imports,Imports|Fuel Oil
+IMPGSL,IMP|GSL,Gasoline imports,Imports|Gasoline
+IMPJET,IMP|JET,Jet-fuel imports,Imports|Jet Fuel
+IMPLPG,IMP|LPG,LPG imports,Imports|LPG
+IMPNGS,IMP|NGS,Natural-gas imports,Imports|Gas
+IMPURN,IMP|URN,Uranium imports,Imports|Uranium
+MINBIO,MIN|BIO,Biomass supply,Biomass
+MINCOA,MIN|COA,Coal mining / coal supply,Coal
+MINCRU,MIN|CRU,Crude oil supply,Oil
+MINGEO,MIN|GEO,Geothermal resource supply,Geothermal
+MINHYD,MIN|HYD,Hydropower resource,Hydro
+MINNGS,MIN|NGS,Natural-gas supply,Gas
+MINSOL,MIN|SOL,Solar resource,Solar
+MINURN,MIN|URN,Uranium supply / mining,Nuclear
+MINWND,MIN|WND,Wind resource,Wind
+PWRBIO,PWR|BIO,Biomass power generation,Electricity|Biomass
+PWRCOA,PWR|COA,Coal power generation,Electricity|Coal
+PWRDIST,PWR|DIST,Power distribution,Electricity|Distribution
+PWRDSL,PWR|DSL,Diesel power generation,Electricity|Diesel
+PWRDSLOFF,PWR|DSL|OFF,Off-grid diesel power generation,Electricity|Diesel|Off-grid
+PWREXPELC,PWR|EXP|ELC,Electricity exports,Electricity|Exports
+PWRGEO,PWR|GEO,Geothermal power generation,Electricity|Geothermal
+PWRHYD001,PWR|HYD|001,Hydropower generation - technology 001,Electricity|Hydro
+PWRNGS,PWR|NGS,Natural-gas power generation,Electricity|Gas
+PWRNUC,PWR|NUC,Nuclear power generation,Electricity|Nuclear
+PWRSOL001,PWR|SOL|001,Solar power generation - technology 001,Electricity|Solar
+PWRSOLOFF,PWR,Off-grid solar power generation,Capacity|Electricity|Solar|Off-grid
+PWRTRA,PWR|TRA,Power transmission,Electricity|Transmission
+PWRWND001,PWR|WND|001,Wind power generation - technology 001,Electricity|Wind
+UPSBDL,UPS|BDL,Biodiesel production / process,Biofuels|Biodiesel
+UPSDBB,UPS|DBB,Model-specific UPS technology: DBB (not defined by OSeMOSYS Global mapping),EVC
+UPSELE,UPS|ELE,Electrolysis process,Hydrogen|Electrolysis
+UPSETH,UPS|ETH,Ethanol production / process,Biofuels|Ethanol
+UPSEVC,UPS|EVC,Model-specific UPS technology: DBB (not defined by OSeMOSYS Global mapping),DBB
+UPSGBB,UPS|GBB,Model-specific UPS technology: GBB (not defined by OSeMOSYS Global mapping),GBB
+UPSREF,UPS|REF,Refinery / refining process,Refined Fuels
+UPSSAF,UPS|SAF,Sustainable aviation fuel production / process,Sustainable Aviation Fuel
+UPSSMR,UPS|SMR,Steam methane reforming process,Hydrogen|SMR

@@ -1,0 +1,32 @@
+Code,OSeMOSYS-style structure,Meaning,IAMC Variable
+MINBACK,MIN|BACK,Backstop resource/supply technology,Backstop
+BACKSTOP,BACKSTOP,Backstop technology/resource used to avoid unmet demand,Backstop
+MINBAG,MIN|BAG,Bagasse resource/supply,Biomass|Bagasse
+PWRCOA001,PWR|COA|001,Coal power generation - technology 001,Electricity|Coal 0001
+PWRCOA002,PWR|COA|002,Coal power generation - technology 002,Electricity|Coal 0002
+PWRCOA003,PWR|COA|003,Coal power generation - technology 003,Electricity|Coal 003
+PWRCOA004,PWR|COA|004,Coal power generation - technology 004,Electricity|Coal 004
+IMPCOA,IMP|COA,Coal imports,Imports|Coal
+DEMINDCOA,DEM|IND|COA,Industrial demand - coal,Industry|Coal
+MINWST,MIN|WST,Waste resource/supply,Waste
+UPSLFG001,UPS|LFG|001,Landfill-gas production/conversion technology - 001,Landfill Gas 001
+PWRLFG001,PWR|LFG|001,Landfill-gas power generation - technology 001,Electricity|Landfill Gas 001
+MINSOL,MIN|SOL,Solar resource/supply,Solar
+PWRSOL001,PWR|SOL|001,Solar power generation - technology 001,Electricity|Solar 001
+PWRSOL002,PWR|SOL|002,Solar power generation - technology 002,Electricity|Solar 002
+PWRSOL003,PWR|SOL|003,Solar power generation - technology 003,Electricity|Solar 003
+PWRSOL004,PWR|SOL|004,Solar power generation - technology 004,Electricity|Solar 004
+PWRSOL005,PWR|SOL|005,Solar power generation - technology 005,Electricity|Solar 005
+MINWND,MIN|WND,Wind resource/supply,Wind
+PWRWND001,PWR|WND|001,Wind power generation - technology 001,Electricity|Wind 001
+MINHYD,MIN|HYD,Hydropower resource/supply,Hydro
+PWRHYD001,PWR|HYD|001,Hydropower generation - technology 001,Electricity|Hydro 001
+IMPKER,IMP|KER,Kerosene imports,Imports|Kerosene
+DEMINDKER,DEM|IND|KER,Industrial demand - kerosene,Industry|Kerosene
+PWRKER001,PWR|KER|001,Kerosene/oil-fired power generation - technology 001,Electricity|Kerosene 001
+PWRTRNDIST,PWR|TRN|DIST,Transmission/distribution electricity aggregation technology,Electricity|Transmission|Distribution
+IMPHFO,IMP|HFO,Heavy fuel oil imports,Imports|Heavy Fuel Oil
+DEMINDHFO,DEM|IND|HFO,Industrial demand - heavy fuel oil,Industry|Heavy Fuel Oil
+PWRHFO001,PWR|HFO|001,Heavy-fuel-oil power generation - technology 001,Electricity|Heavy Fuel Oil 001
+PWRHFO002,PWR|HFO|002,Heavy-fuel-oil power generation - technology 002,Electricity|Heavy Fuel Oil 002
+PWRHFO003,PWR|HFO|003,Heavy-fuel-oil power generation - technology 003,Electricity|Heavy Fuel Oil 003

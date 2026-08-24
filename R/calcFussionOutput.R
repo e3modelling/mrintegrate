@@ -367,11 +367,14 @@ calcFussionOutput <- function() {
   # ETHIOPIA
   # =========================================================================
 
+  ETH_code_mapping <- read.csv(system.file(package = "mrintegrate", file.path("extdata", "OSeMOSYS_ETH_code_mapping V2.csv")))
+  ETH_code_mapping <- ETH_code_mapping[,c(1,4)]
+  names(ETH_code_mapping) <- names(technology_map)
+
   ETH <- readSource(
     "ETHIOPIA"
   ) %>%
     as.quitte()
-
 
   ETH_variable_mapping <- c(
     TotalCapacityAnnual =
@@ -386,7 +389,6 @@ calcFussionOutput <- function() {
     ProductionByTechnologyByMode =
       "Secondary Energy|Electricity"
   )
-
 
   ETH_results <- ETH %>%
     mutate(
@@ -407,7 +409,7 @@ calcFussionOutput <- function() {
       )
     ) %>%
     left_join(
-      technology_map,
+      ETH_code_mapping,
       by = "t"
     ) %>%
     left_join(
@@ -508,6 +510,9 @@ calcFussionOutput <- function() {
     "MAURITIUS"
   )
 
+  MUS_code_mapping <- read.csv(system.file(package = "mrintegrate", file.path("extdata", "OSeMOSYS_MUS_code_mapping V2.csv")))
+  MUS_code_mapping <- MUS_code_mapping[,c(1,4)]
+  names(MUS_code_mapping) <- names(technology_map)
 
   MUS_variable_mapping <- c(
     AccumulatedNewCapacity =
@@ -612,7 +617,7 @@ calcFussionOutput <- function() {
       )
     ) %>%
     left_join(
-      technology_map,
+      MUS_code_mapping,
       by = "t"
     ) %>%
     left_join(
