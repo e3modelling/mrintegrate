@@ -25,7 +25,7 @@ breakdown_co2_plot <- breakdown_co2 %>%
     )
   )
 
-ggplot(
+p <- ggplot(
   breakdown_co2_plot,
   aes(
     x = period,
@@ -46,7 +46,7 @@ ggplot(
     labels = function(x) stringr::str_wrap(x, width = 18)
   ) +
   labs(
-    title = "CO2 Emissions from Electricity Supply - DRC",
+    title = "CO2 Emissions from Electricity Generation - DRC",
     x = "Year",
     y = "Mt CO2/yr",
     fill = "Technology"
@@ -64,6 +64,15 @@ ggplot(
       face = "bold"
     )
   )
+
+ggsave(
+  filename = "breakdown_co2_DRC_from_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
+
 ###################
 data <- NULL
 drc<- a[,c("scenario","period","region","variable_iamc","unit","value","variable")]
@@ -115,7 +124,7 @@ plot_data <- check %>%
     unit = "PJ"
   )
 
-ggplot(
+p <- ggplot(
   plot_data,
   aes(
     x = period,
@@ -146,6 +155,14 @@ ggplot(
     )
   )
 
+# ggsave(
+#   filename = "Electricity_after_production_DRC.png",
+#   plot = p,
+#   width = 12,
+#   height = 9,
+#   dpi = 300
+# )
+
 # drc_secondary <- drc_secondary %>%
 #   dplyr::filter(stringr::str_detect(variable, "Electricity after production"))
 #
@@ -173,7 +190,7 @@ data <- rbind(data,drcSEtotal)
 library(ggplot2)
 library(dplyr)
 
-drcSEtotal %>%
+p <- drcSEtotal %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -194,7 +211,15 @@ drcSEtotal %>%
     plot.title = element_text(face = "bold")
   )
 
-drcSEtotal %>%
+ggsave(
+  filename = "DRC_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
+
+p <- drcSEtotal %>%
   filter(period <= 2042) %>%
   ggplot(aes(
     x = period,
@@ -215,12 +240,20 @@ drcSEtotal %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "DRC_Electricity_Generation_Historical_and_near_term_period.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 library(ggplot2)
 library(dplyr)
 
-drcCO2 %>%
+p <- drcCO2 %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -229,7 +262,7 @@ drcCO2 %>%
   geom_line(linewidth = 1.2) +
   geom_point(size = 1.5) +
   labs(
-    title = "DRC CO2 Emissions",
+    title = "DRC CO2 Emissions from Electricity Generation",
     subtitle = "BASE vs MEAP",
     x = "Year",
     y = "CO2 Emissions (Mt CO2/yr)",
@@ -241,7 +274,15 @@ drcCO2 %>%
     plot.title = element_text(face = "bold")
   )
 
-drcCO2 %>%
+ggsave(
+  filename = "DRC_CO2_Emissions_from_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
+
+p <- drcCO2 %>%
   filter(period <= 2042) %>%
   ggplot(aes(
     x = period,
@@ -263,7 +304,13 @@ drcCO2 %>%
     plot.title = element_text(face = "bold")
   )
 
-
+ggsave(
+  filename = "DRC_CO2_Emissions_Historical_near_term_period_2.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 library(dplyr)
 library(stringr)
@@ -293,7 +340,7 @@ renewable_share <- check %>%
 
 # data <- rbind(data,renewable_share)
 
-renewable_share %>%
+p <- renewable_share %>%
   ggplot(aes(
     x = period,
     y = renewable_share,
@@ -316,6 +363,14 @@ renewable_share %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "DRC_Renewable_Electricity_Share.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 # drc<- a[,c("scenario","period","region","variable_iamc","unit","value")]
@@ -366,7 +421,7 @@ drc_emissions_breakdown <- drcco2_share %>%
 
 # data <- rbind(data,drc_emissions_breakdown)
 
-drc_emissions_breakdown %>%
+p <- drc_emissions_breakdown %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -387,7 +442,16 @@ drc_emissions_breakdown %>%
     plot.title = element_text(face = "bold")
   )
 
-drc_emissions_breakdown %>%
+ggsave(
+  filename = "DRC_CO2_Emissions_from_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
+
+
+p <- drc_emissions_breakdown %>%
   filter(period <= 2040) %>%
   ggplot(aes(
     x = period,
@@ -408,6 +472,14 @@ drc_emissions_breakdown %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "DRC_CO2_Emissions_from_Electricity_Generation_until_2040.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 drc_FE <- select(drc, - variable) %>%
@@ -475,7 +547,7 @@ rb <- drcFEtotal
 names(rb) <- sub("variable_iamc", "variable", names(rb))
 data <- rbind(data,rb)
 
-drcFE_breakdown %>%
+p <- drcFE_breakdown %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -496,9 +568,17 @@ drcFE_breakdown %>%
     plot.title = element_text(face = "bold")
   )
 
+ggsave(
+  filename = "DRC_Final_Energy_Electricity_Demand.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
+
 # data <- rbind(data,drcFE_breakdown)
 
-drcFE_breakdown %>%
+p <- drcFE_breakdown %>%
   filter(period <= 2040) %>%
   ggplot(aes(
     x = period,
@@ -519,6 +599,14 @@ drcFE_breakdown %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "DRC_Final_Energy_Electricity_Demand_until_2040.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 ############## ETH
@@ -578,10 +666,11 @@ EMICO2ETH[["scenario"]] <- "Ambitious_85percentBy2040"
 two <- EMICO2ETH
 
 totalCO2ETH <- rbind(one, two)
+totalCO2ETH[["value"]] <- totalCO2ETH[["value"]] / 1000
 
 data <- rbind(data,select(totalCO2ETH, - model))
 
-totalCO2ETH %>%
+p <- totalCO2ETH %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -590,7 +679,7 @@ totalCO2ETH %>%
   geom_line(linewidth = 1.2) +
   geom_point(size = 1.5) +
   labs(
-    title = "ETH CO2 Emissions",
+    title = "ETH CO2 Emissions from Electricity Generation",
     subtitle = "Baseline vs Ambitious_85percentBy2040",
     x = "Year",
     y = "CO2 Emissions (Mt CO2/yr)",
@@ -601,6 +690,14 @@ totalCO2ETH %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "ETH_CO2_Emissions_from_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 
@@ -703,7 +800,7 @@ totalCO2ETH[["value"]] <- totalCO2ETH[["value"]]
 
 data <- rbind(data,select(totalCO2ETH, - model))
 
-totalCO2ETH %>%
+p <- totalCO2ETH %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -723,6 +820,16 @@ totalCO2ETH %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+
+ggsave(
+  filename = "ETH_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
+
 
 
 ############## MUS
@@ -814,7 +921,7 @@ totalCO2ETH <- rbind(one, two)
 
 data <- rbind(data,select(totalCO2ETH, - model))
 
-totalCO2ETH %>%
+p <- totalCO2ETH %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -823,7 +930,7 @@ totalCO2ETH %>%
   geom_line(linewidth = 1.2) +
   geom_point(size = 1.5) +
   labs(
-    title = "MUS CO2 Emissions",
+    title = "MUS CO2 Emissions from Electricity Generation",
     subtitle = "Test293 vs Test292",
     x = "Year",
     y = "CO2 Emissions (Mt CO2/yr)",
@@ -835,6 +942,13 @@ totalCO2ETH %>%
     plot.title = element_text(face = "bold")
   )
 
+ggsave(
+  filename = "MUS_CO2_Emissions_from_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 ############## MUS
 drcETH<- a[,c("scenario","period","region","variable_iamc","unit","value","variable","t")]
@@ -957,7 +1071,7 @@ totalCO2ETH[["value"]] <- totalCO2ETH[["value"]]
 
 data <- rbind(data,select(totalCO2ETH, - model))
 
-totalCO2ETH %>%
+p <- totalCO2ETH %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -977,6 +1091,14 @@ totalCO2ETH %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "MUS_Electricity_Generation.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 ############## MUS
@@ -1068,7 +1190,7 @@ totalCO2ETH <- rbind(one, two)
 
 data <- rbind(data,select(totalCO2ETH, - model))
 
-totalCO2ETH %>%
+p <- totalCO2ETH %>%
   ggplot(aes(
     x = period,
     y = value,
@@ -1088,6 +1210,14 @@ totalCO2ETH %>%
     legend.position = "bottom",
     plot.title = element_text(face = "bold")
   )
+
+ggsave(
+  filename = "MUS_Final_Energy_Electricity_Demand.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 
 ############## SEN
@@ -1111,11 +1241,11 @@ drcETH <- drcETH %>%
 drcETH[["unit"]] <- "PJ"
 drcETH[["value"]] <- drcETH[["value"]] * 0.0036
 
-ggplot(drcETH, aes(x = period, y = value)) +
+p <- ggplot(drcETH, aes(x = period, y = value)) +
   geom_line(linewidth = 1) +
   geom_point(size = 2) +
   labs(
-    title = "Senegal Secondary Energy | Electricity",
+    title = "Senegal Secondary Energy|Electricity",
     x = "Year",
     y = "PJ"
   ) +
@@ -1130,6 +1260,13 @@ ggplot(drcETH, aes(x = period, y = value)) +
     )
   )
 
+ggsave(
+  filename = "Senegal_Secondary_Energy_Electricity.png",
+  plot = p,
+  width = 12,
+  height = 9,
+  dpi = 300
+)
 
 library(dplyr)
 library(ggplot2)
