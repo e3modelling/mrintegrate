@@ -393,35 +393,67 @@ readDemocraticRepublicCongo <- function() {
 #' @order 1
 downloadDemocraticRepublicCongo <- function() {
 
-  base_url <- "https://zenodo.org/records/14981239/files/"
+  excel_file <- "OSeMOSYS-DRC dataset for the Power Sector.xlsx"
 
-  files <- c(
-    "OSeMOSYS-DRC dataset for the Power Sector.xlsx",
-    "DRC-LCS-Model data and results.zip"
+  excel_url <- paste0(
+    "https://zenodo.org/records/14981239/files/",
+    "OSeMOSYS-DRC%20dataset%20for%20the%20Power%20Sector.xlsx",
+    "?download=1"
   )
 
-  for (f in files) {
+  zip_file <- "DRC-LCS-Model data and results.zip"
+
+  zip_url <- paste0(
+    "https://zenodo.org/records/18789827/files/",
+    "DRC-LCS-Model%20data%20and%20results.zip",
+    "?download=1"
+  )
+
+
+  # Download Excel only if missing
+  if (!file.exists(excel_file)) {
+
     utils::download.file(
-      url = paste0(base_url, utils::URLencode(f), "?download=1"),
-      destfile = f,
+      url = excel_url,
+      destfile = excel_file,
       mode = "wb",
       quiet = FALSE
     )
-
-    if (!file.exists(f)) {
-      stop("Download failed: ", f, " was not created.")
-    }
   }
 
-  list(
-    url = paste0(base_url, utils::URLencode(files), "?download=1"),
-    doi = "10.5281/zenodo.14981239",
-    title = "OSeMOSYS-DRC dataset for the Power Sector",
-    description = "RE-INTEGRATE power sector dataset for the Democratic Republic of the Congo.",
-    unit = "-",
-    author = "RE-INTEGRATE",
-    release_date = "2025",
-    license = "-",
-    comment = "Automatically downloaded from Zenodo."
+
+  # Download ZIP only if missing
+  if (!file.exists(zip_file)) {
+
+    utils::download.file(
+      url = zip_url,
+      destfile = zip_file,
+      mode = "wb",
+      quiet = FALSE
+    )
+  }
+
+
+  # Check downloads
+  if (!file.exists(excel_file)) {
+    stop("Download failed: ", excel_file)
+  }
+
+  if (!file.exists(zip_file)) {
+    stop("Download failed: ", zip_file)
+  }
+
+
+  return(
+    list(
+      url = c(
+        excel_url,
+        zip_url
+      ),
+      doi = c(
+        "10.5281/zenodo.14981239",
+        "10.5281/zenodo.18789827"
+      )
+    )
   )
 }
