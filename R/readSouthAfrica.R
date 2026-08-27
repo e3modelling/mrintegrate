@@ -214,11 +214,12 @@ readSouthAfrica <- function() {
   Liquid_Fuels[["unit"]] <- "PJ"
   Liquid_Fuels[["region"]] <- "ZAF"
   Liquid_Fuels[["type"]] <- "input"
+  period <- "2017"
 
   x <- stats::setNames(list(PartialProvincialEB2017, CombinedElc, Electricity,
-                            Liquid_Fuels, SectorMap1, SectorMap2_long),
+                            Liquid_Fuels, SectorMap1, SectorMap2_long, period),
                        c("PartialProvincialEB2017", "CombinedElc", "ElectrityProduction",
-                         "Liquid_Fuels", "SectorMap1", "SectorMap2"))
+                         "Liquid_Fuels", "SectorMap1", "SectorMap2", "period"))
 
   list(x = x,
        weight = NULL,
@@ -277,6 +278,66 @@ downloadSouthAfrica <- function() {
     ),
     unit = "-",
     author = "Merven",
+    release_date = "2025",
+    license = "-",
+    comment = "Automatically downloaded from Zenodo."
+  )
+}
+#' @rdname readSouthAfrica
+#' @importFrom utils download.file
+#' @export
+#' @order 1
+downSouthAfrica <- function() {
+
+  file <- paste0(
+    "South African Disaggregated Provincial Electricity and ",
+    "Liquid Fuels Energy Balance for 2017 - Merven 2025.xlsx"
+  )
+
+  url <- paste0(
+    "https://zenodo.org/records/14945793/files/",
+    "South%20African%20Disaggregated%20Provincial%20Electricity%20",
+    "and%20Liquid%20Fuels%20Energy%20Balance%20for%202017%20-%20",
+    "Merven%202025.xlsx",
+    "?download=1"
+  )
+
+
+  # Download only if file does not already exist
+  if (!file.exists(file)) {
+
+    utils::download.file(
+      url = url,
+      destfile = file,
+      mode = "wb",
+      quiet = FALSE
+    )
+  }
+
+
+  # Check that the file exists
+  if (!file.exists(file)) {
+    stop(
+      "Download failed: ",
+      file,
+      " was not created."
+    )
+  }
+
+
+  list(
+    url = url,
+    doi = "10.5281/zenodo.14945793",
+    title = paste0(
+      "South African Disaggregated Provincial Electricity ",
+      "and Liquid Fuels Energy Balance for 2017"
+    ),
+    description = paste0(
+      "South African Disaggregated Provincial Electricity ",
+      "and Liquid Fuels Energy Balance."
+    ),
+    unit = "",
+    author = "RE-INTEGRATE",
     release_date = "2025",
     license = "-",
     comment = "Automatically downloaded from Zenodo."

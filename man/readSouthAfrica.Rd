@@ -2,10 +2,13 @@
 % Please edit documentation in R/readSouthAfrica.R
 \name{downloadSouthAfrica}
 \alias{downloadSouthAfrica}
+\alias{downSouthAfrica}
 \alias{readSouthAfrica}
 \title{Read-in electricity production and energy balance data for South Africa}
 \usage{
 downloadSouthAfrica()
+
+downSouthAfrica()
 
 readSouthAfrica()
 }

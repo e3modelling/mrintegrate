@@ -2,8 +2,8 @@
 % Please edit documentation in R/calcFussionOutput.R
 \name{calcFussionOutput}
 \alias{calcFussionOutput}
-\title{Calculate Democratic Republic of the Congo and ETHIOPIA model outputs
-Reads the Democratic Republic of the Congo and ETHIOPIA source data,
+\title{Calculate Democratic Republic of the Congo,MAURITIUS and ETHIOPIA model outputs
+Reads the Democratic Republic of the Congo,MAURITIUS and ETHIOPIA source data,
 converts the model results to a quitte data frame,
 and maps technologies, commodities, emissions, costs, capacity, generation,
 demand, and activity variables to IAMC-style variable names.}

@@ -20,13 +20,13 @@
 #' @importFrom magclass as.magpie collapseDim
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr %>% arrange case_when filter first group_by left_join
-#'   mutate select summarise ungroup
+#' @importFrom dplyr  mutate select summarise ungroup
 #' @importFrom tidyr replace_na
 #' @importFrom stringr regex str_detect str_remove str_starts str_wrap
 #' @importFrom ggplot2 aes element_text facet_wrap geom_col geom_hline
-#'   geom_line geom_point ggsave ggplot guide_legend guides labs
-#'   scale_fill_discrete scale_x_continuous scale_y_continuous
-#'   theme theme_minimal
+#' @importFrom  ggplot2 geom_line geom_point ggsave ggplot guide_legend guides labs
+#' @importFrom ggplot2  scale_fill_discrete scale_x_continuous scale_y_continuous
+#' @importFrom ggplot2  theme theme_minimal
 #' @importFrom postprom helperAggregateLevel
 #'
 #' @export
