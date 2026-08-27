@@ -19,8 +19,8 @@
 #' @importFrom madrat calcOutput
 #' @importFrom magclass as.magpie collapseDim
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr %>% arrange case_when filter first group_by left_join
-#' @importFrom dplyr  mutate select summarise ungroup
+#' @importFrom dplyr %>% arrange case_when filter first group_by left_join na_if
+#' @importFrom dplyr  mutate select summarise ungroup coalesce
 #' @importFrom tidyr replace_na
 #' @importFrom stringr regex str_detect str_remove str_starts str_wrap
 #' @importFrom ggplot2 aes element_text facet_wrap geom_col geom_hline
@@ -39,9 +39,6 @@ toolmrintegrate <- function() {
   breakdown_co2 <- filter(breakdown_co2, region %in% c("DRC"))
   breakdown_co2 <- breakdown_co2 %>%
     dplyr::filter(stringr::str_detect(variable_iamc, "Emissions\\|CO2\\|"))
-  library(dplyr)
-  library(ggplot2)
-  library(stringr)
 
   breakdown_co2_plot <- breakdown_co2 %>%
     filter(
@@ -137,10 +134,6 @@ toolmrintegrate <- function() {
   check <- drc_secondary %>%
     dplyr::filter(stringr::str_detect(variable, "Electricity after production"))
 
-  library(dplyr)
-  library(ggplot2)
-  library(stringr)
-
   plot_data <- check %>%
     filter(
       region == "DRC",
@@ -221,9 +214,6 @@ toolmrintegrate <- function() {
 
   data <- rbind(data,drcSEtotal)
 
-  library(ggplot2)
-  library(dplyr)
-
   p <- drcSEtotal %>%
     ggplot(aes(
       x = period,
@@ -283,10 +273,6 @@ toolmrintegrate <- function() {
     dpi = 300
   )
 
-
-  library(ggplot2)
-  library(dplyr)
-
   p <- drcCO2 %>%
     ggplot(aes(
       x = period,
@@ -345,9 +331,6 @@ toolmrintegrate <- function() {
     height = 9,
     dpi = 300
   )
-
-  library(dplyr)
-  library(stringr)
 
   renewable_share <- check %>%
     filter(
@@ -423,11 +406,6 @@ toolmrintegrate <- function() {
         variable,
         "^Emissions"
       ))
-
-  library(dplyr)
-  library(stringr)
-  library(ggplot2)
-  library(tidyr)
 
   drc_emissions_breakdown <- drcco2_share %>%
     filter(
@@ -1301,9 +1279,6 @@ toolmrintegrate <- function() {
     height = 9,
     dpi = 300
   )
-
-  library(dplyr)
-  library(ggplot2)
 
   # data_increase <- data %>%
   #   arrange(
