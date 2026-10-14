@@ -370,10 +370,88 @@ readDemocraticRepublicCongo <- function() {
   ImportsExports[["variable"]] <- "Total Technology Annual Activity Upper Limit"
   ImportsExports[["type"]] <- "input"
 
+  read_scenario_csvs2 <- function(path, scenario) {
+
+    files <- list.files(
+      path = path,
+      full.names = TRUE,
+      recursive = TRUE
+    )
+
+    files <- files[!grepl("^data", basename(files), ignore.case = TRUE) &
+                     !basename(files) %in% c(
+                       "E8_AnnualEmissionsLimit.csv",
+                       "EBb4_EnergyBalanceEachYear4_ICR.csv"
+                     )]
+
+    data_list <- lapply(files, function(f) {
+
+      df <- read.csv(
+        f,
+        header = TRUE,
+        check.names = FALSE,
+        stringsAsFactors = FALSE
+      )
+
+      if (ncol(df) == 0) {
+        stop("File has no columns: ", f)
+      }
+
+      # Store the original name of the last column
+      variable <- names(df)[ncol(df)]
+
+      # Rename the last column to value
+      names(df)[ncol(df)] <- "value"
+
+      # Add metadata
+      df$variable <- variable
+      df$scenario <- scenario
+
+      df
+    })
+
+    # Match columns by name and fill missing columns with NA
+    result <- dplyr::bind_rows(data_list)
+
+    result <- select(result, - c("r_x","r_y"))
+
+    result
+  }
+
+  root_dir <- "DRC Model - 08_2026"
+
+  # Find all directories recursively
+  dirs <- list.dirs(root_dir, recursive = TRUE, full.names = TRUE)
+
+  # Keep only scenario folders (BASE, HA, LA, MA)
+  dirs <- dirs[grepl("/(BASE|HA|LA|MA)$", dirs)]
+
+  # Read all CSV files and assign scenario names dynamically
+  DRC_results2 <- bind_rows(lapply(dirs, function(path) {
+
+    # Example: LCS/MA -> LCS-MA
+    scenario <- paste0(
+      basename(dirname(path)),
+      "-",
+      basename(path)
+    )
+
+    read_scenario_csvs2(path, scenario)
+  }))
+
+  DRC_results2[["unit"]] <- "various"
+  DRC_results2[["region"]] <- 'DRC'
+  names(DRC_results2) <- sub("y", "period", names(DRC_results2))
+
+  DRC_results2 <- as.quitte(DRC_results2)
+  DRC_results2[["type"]] <- "output"
+  output2 <- as.magpie(DRC_results2)
+  output2 <- output2[, getItems(output2, 2) != "  NA", ]
+
   x <- stats::setNames(list(output,SETS,capacity_factor,ResidualCapacityAggregated,
-      Costs,Investment,ResourcePotential,Demand,ImportsExports),
-    c("output","SETS","capacity_factor","ResidualCapacityAggregated","Costs",
-      "Investment","ResourcePotential","Demand","ImportsExports"))
+                            Costs,Investment,ResourcePotential,Demand,ImportsExports, output2),
+                       c("output","SETS","capacity_factor","ResidualCapacityAggregated","Costs",
+                         "Investment","ResourcePotential","Demand","ImportsExports", "output2"))
 
   list(x = x,
        weight = NULL,
