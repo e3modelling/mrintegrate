@@ -33,7 +33,7 @@
 
 toolmrintegrateDRC <- function() {
   DRC <- calcOutput(type = "FussionOutputDRC", aggregate = FALSE)
-  a <- calcOutput(type = "FussionOutputDRC", aggregate = FALSE)
+  a <- calcOutput(type = "FussionOutput", aggregate = FALSE)
 
   #####breakdown co2
   breakdown_co2<- DRC[,c("scenario","period","region","variable_iamc","unit","value","variable")]
@@ -489,65 +489,96 @@ toolmrintegrateDRC <- function() {
 
   # data <- rbind(data,drc_emissions_breakdown)
 
-  p <- drc_emissions_breakdown %>%
-    ggplot(aes(
-      x = period,
-      y = value,
-      fill = fuel
-    )) +
-    geom_col() +
-    facet_wrap(~ scenario) +
-    labs(
-      title = "DRC CO2 Emissions from Electricity Generation",
-      subtitle = "Emissions breakdown by fuel",
-      x = "Year",
-      y = "CO2 Emissions",
-      fill = "Fuel"
-    ) +
-    theme_minimal(base_size = 13) +
-    theme(
-      legend.position = "bottom",
-      plot.title = element_text(face = "bold")
-    )
+  # Create output directory
+  # output_dir <- "DRC_CO2_Emissions_Fuel_Plots"
+  # dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+  #
+  # # Loop through all scenarios
+  # for (scen in unique(drc_emissions_breakdown$scenario)) {
+  #
+  #   # Filter current scenario
+  #   scenario_data <- drc_emissions_breakdown %>%
+  #     filter(scenario == scen)
+  #
+  #   # Create plot
+  #   p <- ggplot(
+  #     scenario_data,
+  #     aes(
+  #       x = period,
+  #       y = value,
+  #       fill = fuel
+  #     )
+  #   ) +
+  #     geom_col() +
+  #     scale_x_continuous(
+  #       breaks = sort(unique(scenario_data$period))
+  #     ) +
+  #     scale_fill_discrete(
+  #       labels = function(x) stringr::str_wrap(x, width = 18)
+  #     ) +
+  #     labs(
+  #       title = paste("DRC CO2 Emissions from Electricity Generation -", scen),
+  #       subtitle = "Emissions breakdown by fuel",
+  #       x = "Year",
+  #       y = "CO2 Emissions",
+  #       fill = "Fuel"
+  #     ) +
+  #     guides(
+  #       fill = guide_legend(
+  #         nrow = 2,
+  #         byrow = TRUE
+  #       )
+  #     ) +
+  #     theme_minimal(base_size = 13) +
+  #     theme(
+  #       legend.position = "bottom",
+  #       plot.title = element_text(face = "bold"),
+  #       axis.text.x = element_text(angle = 45, hjust = 1)
+  #     )
+  #
+  #   # Save each scenario separately
+  #   ggsave(
+  #     filename = file.path(
+  #       output_dir,
+  #       paste0("DRC_CO2_Emissions_Fuel_", scen, ".png")
+  #     ),
+  #     plot = p,
+  #     width = 12,
+  #     height = 7,
+  #     dpi = 300
+  #   )
+  # }
 
-  ggsave(
-    filename = "DRC_CO2_Emissions_from_Electricity_Generation.png",
-    plot = p,
-    width = 12,
-    height = 9,
-    dpi = 300
-  )
 
-
-  p <- drc_emissions_breakdown %>%
-    filter(period <= 2040) %>%
-    ggplot(aes(
-      x = period,
-      y = value,
-      fill = fuel
-    )) +
-    geom_col() +
-    facet_wrap(~ scenario) +
-    labs(
-      title = "DRC CO2 Emissions from Electricity Generation",
-      subtitle = "Emissions breakdown by fuel, until 2040",
-      x = "Year",
-      y = "CO2 Emissions",
-      fill = "Fuel"
-    ) +
-    theme_minimal(base_size = 13) +
-    theme(
-      legend.position = "bottom",
-      plot.title = element_text(face = "bold")
-    )
-
-  ggsave(
-    filename = "DRC_CO2_Emissions_from_Electricity_Generation_until_2040.png",
-    plot = p,
-    width = 12,
-    height = 9,
-    dpi = 300
-  )
+  # p <- drc_emissions_breakdown %>%
+  #   filter(period <= 2040) %>%
+  #   ggplot(aes(
+  #     x = period,
+  #     y = value,
+  #     fill = fuel
+  #   )) +
+  #   geom_col() +
+  #   facet_wrap(~ scenario) +
+  #   labs(
+  #     title = "DRC CO2 Emissions from Electricity Generation",
+  #     subtitle = "Emissions breakdown by fuel, until 2040",
+  #     x = "Year",
+  #     y = "CO2 Emissions",
+  #     fill = "Fuel"
+  #   ) +
+  #   theme_minimal(base_size = 13) +
+  #   theme(
+  #     legend.position = "bottom",
+  #     plot.title = element_text(face = "bold")
+  #   )
+  #
+  # ggsave(
+  #   filename = "DRC_CO2_Emissions_from_Electricity_Generation_until_2040.png",
+  #   plot = p,
+  #   width = 12,
+  #   height = 9,
+  #   dpi = 300
+  # )
 
 
   drc_FE <- select(drc, - variable) %>%
@@ -615,66 +646,95 @@ toolmrintegrateDRC <- function() {
   names(rb) <- sub("variable_iamc", "variable", names(rb))
   data <- rbind(data,rb)
 
-  p <- drcFE_breakdown %>%
-    ggplot(aes(
-      x = period,
-      y = value,
-      fill = sector
-    )) +
-    geom_col() +
-    facet_wrap(~ scenario) +
-    labs(
-      title = "DRC Final Energy Electricity Demand",
-      subtitle = "Breakdown by sector",
-      x = "Year",
-      y = "Final Energy (PJ)",
-      fill = "Sector"
+  # Create output directory
+  output_dir <- "DRC_Final_Energy_Electricity_Demand_Plots"
+  dir.create(output_dir, showWarnings = FALSE, recursive = TRUE)
+
+  # Loop through all scenarios
+  for (scen in unique(drcFE_breakdown$scenario)) {
+
+    # Filter current scenario
+    scenario_data <- drcFE_breakdown %>%
+      filter(scenario == scen)
+
+    # Create plot
+    p <- ggplot(
+      scenario_data,
+      aes(
+        x = period,
+        y = value,
+        fill = sector
+      )
     ) +
-    theme_minimal(base_size = 13) +
-    theme(
-      legend.position = "bottom",
-      plot.title = element_text(face = "bold")
+      geom_col() +
+      scale_x_continuous(
+        breaks = seq(2020, 2070, by = 10)
+      ) +
+      scale_fill_discrete(
+        labels = function(x) stringr::str_wrap(x, width = 18)
+      ) +
+      labs(
+        title = paste("DRC Final Energy Electricity Demand -", scen),
+        subtitle = "Breakdown by sector",
+        x = "Year",
+        y = "Final Energy (PJ)",
+        fill = "Sector"
+      ) +
+      guides(
+        fill = guide_legend(
+          nrow = 2,
+          byrow = TRUE
+        )
+      ) +
+      theme_minimal(base_size = 13) +
+      theme(
+        legend.position = "bottom",
+        plot.title = element_text(face = "bold"),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+      )
+
+    # Save each scenario separately
+    ggsave(
+      filename = file.path(
+        output_dir,
+        paste0("DRC_Final_Energy_Electricity_Demand_", scen, ".png")
+      ),
+      plot = p,
+      width = 12,
+      height = 7,
+      dpi = 300
     )
+  }
 
-  ggsave(
-    filename = "DRC_Final_Energy_Electricity_Demand.png",
-    plot = p,
-    width = 12,
-    height = 9,
-    dpi = 300
-  )
-
-  # data <- rbind(data,drcFE_breakdown)
-
-  p <- drcFE_breakdown %>%
-    filter(period <= 2040) %>%
-    ggplot(aes(
-      x = period,
-      y = value,
-      fill = sector
-    )) +
-    geom_col() +
-    facet_wrap(~ scenario) +
-    labs(
-      title = "DRC Final Energy Electricity Demand",
-      subtitle = "Breakdown by sector, until 2040",
-      x = "Year",
-      y = "Final Energy (PJ)",
-      fill = "Sector"
-    ) +
-    theme_minimal(base_size = 13) +
-    theme(
-      legend.position = "bottom",
-      plot.title = element_text(face = "bold")
-    )
-
-  ggsave(
-    filename = "DRC_Final_Energy_Electricity_Demand_until_2040.png",
-    plot = p,
-    width = 12,
-    height = 9,
-    dpi = 300
-  )
+  # p <- drcFE_breakdown %>%
+  #   filter(period <= 2040) %>%
+  #   ggplot(aes(
+  #     x = period,
+  #     y = value,
+  #     fill = sector
+  #   )) +
+  #   geom_col() +
+  #   facet_wrap(~ scenario) +
+  #   labs(
+  #     title = "DRC Final Energy Electricity Demand",
+  #     subtitle = "Breakdown by sector, until 2040",
+  #     x = "Year",
+  #     y = "Final Energy (PJ)",
+  #     fill = "Sector"
+  #   ) +
+  #   theme_minimal(base_size = 13) +
+  #   theme(
+  #     legend.position = "bottom",
+  #     plot.title = element_text(face = "bold")
+  #   )
+  #
+  # ggsave(
+  #   filename = "DRC_Final_Energy_Electricity_Demand_until_2040.png",
+  #   plot = p,
+  #   width = 12,
+  #   height = 9,
+  #   dpi = 300
+  # )
 
 
   ############## ETH
