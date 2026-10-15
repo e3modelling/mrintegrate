@@ -706,6 +706,43 @@ toolmrintegrateDRC <- function() {
     )
   }
 
+  drcFE_all <- drcFE_breakdown %>%
+    group_by(scenario, region, period, unit) %>%
+    summarise(
+      value = sum(value, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    mutate(variable = "Final Energy|Electricity") %>%
+    select(scenario, region, period, variable, value, unit)
+
+  p <- drcFE_all %>%
+    ggplot(aes(
+      x = period,
+      y = value,
+      color = scenario
+    )) +
+    geom_line(linewidth = 1.2) +
+    geom_point(size = 1.5) +
+    labs(
+      title = "DRC Final Energy Electricity Demand",
+      x = "Year",
+      y = "Final Energy Electricity Demand (PJ)",
+      color = "Scenario"
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      legend.position = "bottom",
+      plot.title = element_text(face = "bold")
+    )
+
+  ggsave(
+    filename = "DRC Final Energy.png",
+    plot = p,
+    width = 12,
+    height = 9,
+    dpi = 300
+  )
+
   # p <- drcFE_breakdown %>%
   #   filter(period <= 2040) %>%
   #   ggplot(aes(
